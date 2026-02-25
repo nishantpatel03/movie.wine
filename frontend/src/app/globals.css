@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f4c025;
+  --color-background-dark: #0a0904;
+  --color-background-light: #f8f8f5;
+  --color-accent-purple: #4a1d96;
+  --color-glass-bg: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
+/* CSS Custom Properties for Navbar.module.css and other module CSS */
+:root {
+  --primary: #f4c025;
+  --foreground: #f1f5f9;
+  --text-muted: #94a3b8;
+  --background: #0a0904;
+}
+
+@layer utilities {
+  .glassmorphism {
+    background: rgba(18, 16, 8, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(244, 192, 37, 0.1);
+  }
+
+  .hero-gradient {
+    background: linear-gradient(180deg, rgba(10, 9, 4, 0) 0%, rgba(10, 9, 4, 0.9) 100%);
+  }
+
+  .sentiment-bar {
+    background: linear-gradient(90deg, #f4c025 0%, #4a1d96 100%);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 15px rgba(244, 192, 37, 0.4);
+  }
+
+  .glass-card {
+    background: rgba(34, 30, 16, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(244, 192, 37, 0.1);
+  }
+
+  .purple-overlay {
+    background: linear-gradient(to right, rgba(34, 30, 16, 0.95) 20%, rgba(88, 28, 135, 0.3) 100%);
+  }
+
+  .radial-progress {
+    background: radial-gradient(closest-side, #221e10 79%, transparent 80% 100%),
+      conic-gradient(#f4c025 94%, #493f22 0);
+  }
+
+  .link-hover {
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+  }
+
+  .link-hover:hover {
+    color: var(--primary);
+  }
+
+  .glass {
+    background: rgba(18, 16, 8, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+}
+
+body {
+  background-color: #0a0904;
+  color: #f1f5f9;
+  overflow-x: hidden;
+}

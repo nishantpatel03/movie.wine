@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MovieWine Personalized AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7311d4",
+                        "accent-gold": "#FFD700",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "surface-purple": "#2d1b42",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(115, 17, 212, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        .gold-glow {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 px-6 py-4 lg:px-20 bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-12">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined text-2xl">movie_filter</span>
+</div>
+<h2 class="text-slate-100 text-2xl font-bold tracking-tight">Movie<span class="text-primary">Wine</span></h2>
+</div>
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-slate-100 text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Movies</a>
+<a class="text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">My Library</a>
+<a class="text-primary text-sm font-bold border-b-2 border-primary pb-1" href="#">AI Taste</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 h-10 max-w-md hidden md:block">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full bg-surface-purple/50 border border-primary/30">
+<div class="text-primary/60 flex items-center justify-center pl-4">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full border-none bg-transparent focus:ring-0 text-slate-100 placeholder:text-primary/40 px-3 text-sm" placeholder="Search movies, directors, or AI tags..."/>
+</div>
+</label>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center rounded-xl size-10 bg-surface-purple hover:bg-primary/20 text-slate-100 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full border-2 border-primary p-0.5">
+<img alt="User avatar" class="rounded-full h-full w-full object-cover" data-alt="Close up portrait of a male user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJVgdRFOmM2y4PyyTwGznnLK6Qlwvar2Zh4qThUJdLenk7l6zTGF3ZfHyOPaMXsN9Z8zBKd71eqOHLBE13OV9lMoFuMbHG0GPieS5q6sIt6ALrxGDySLJHnfmlUFp0oiXs_QnZKHzr0pXhK4_MaBBc_ljOZZHKofvK9RU3nf6cn3eRgDV45-nH1-bS7C-fj-_-6ofMtURbnTtZfEDfXALuwyhTKrfZmqEg4_S3TPP-BL8HW8Hk7FcIRl4y-Lyu3LOysdrv5831mZM"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex flex-col flex-1 px-6 lg:px-20 py-10 max-w-[1440px] mx-auto w-full">
+<!-- AI Taste Profile Summary -->
+<section class="mb-12">
+<div class="flex flex-wrap justify-between items-end gap-6 mb-8">
+<div class="flex flex-col gap-2">
+<h1 class="text-slate-100 text-4xl lg:text-5xl font-black tracking-tight">Your AI Taste Profile</h1>
+<p class="text-primary/70 text-lg font-medium">Curating cinematic experiences based on your unique artistic palette.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary/80 transition-all">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                            Recalibrate AI
+                        </button>
+</div>
+<div class="flex gap-4 flex-wrap">
+<div class="flex h-10 items-center justify-center gap-2 rounded-full bg-surface-purple px-5 border border-primary/30 text-slate-100">
+<span class="material-symbols-outlined text-primary text-xl">psychology</span>
+<span class="text-sm font-semibold tracking-wide">Cerebral</span>
+</div>
+<div class="flex h-10 items-center justify-center gap-2 rounded-full bg-surface-purple px-5 border border-primary/30 text-slate-100">
+<span class="material-symbols-outlined text-primary text-xl">visibility</span>
+<span class="text-sm font-semibold tracking-wide">Visual Spectacle</span>
+</div>
+<div class="flex h-10 items-center justify-center gap-2 rounded-full bg-surface-purple px-5 border border-primary/30 text-slate-100">
+<span class="material-symbols-outlined text-primary text-xl">all_inclusive</span>
+<span class="text-sm font-semibold tracking-wide">Mind-Bending</span>
+</div>
+<div class="flex h-10 items-center justify-center gap-2 rounded-full bg-surface-purple px-5 border border-primary/30 text-slate-100">
+<span class="material-symbols-outlined text-primary text-xl">cloudy</span>
+<span class="text-sm font-semibold tracking-wide">Atmospheric</span>
+</div>
+<div class="flex h-10 items-center justify-center gap-2 rounded-full bg-surface-purple/30 px-5 border border-dashed border-primary/30 text-primary/60 italic">
+<span class="text-sm font-medium">+ Neo-Noir</span>
+</div>
+</div>
+</section>
+<!-- Recommendations Grid -->
+<section>
+<div class="flex items-center gap-3 mb-8">
+<span class="material-symbols-outlined text-accent-gold">stars</span>
+<h2 class="text-slate-100 text-2xl font-bold tracking-tight">Top AI Matches for You</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+<!-- Movie Card 1: Hover State Simulated -->
+<div class="group relative flex flex-col gap-3 transition-all duration-300 scale-105 gold-glow rounded-xl z-10">
+<div class="relative aspect-[2/3] overflow-hidden rounded-xl border-2 border-accent-gold">
+<img alt="Movie Poster" class="h-full w-full object-cover" data-alt="Cinematic shot of a distant nebula in deep space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh0ffDApaVBWdAysTXXRUIIMCX4LI2e76Xmcx2jrt9AUkvl0m7_SXQ7lfV8s0FXJp1FOwXx7mV6FqWlwiMstLWIXwcX8bWRRGpNXaURnjBER_7T59orf-P7XeHryLwPJSU-XAYqydsVhdQ_NSGVPf-AS38f_yuiaCI8U6fgTyRdhOgottbDk0C62YSU8vlXIk2BZJpXG6ShcDCccbRh0ZreQ3mFwUuLrLS_1EjyKi5zsM7YWVi9BiaqkmcX7zaaThkIAEp6Occ9so"/>
+<div class="absolute top-3 right-3 bg-accent-gold text-background-dark px-2 py-1 rounded text-xs font-black shadow-lg">
+                                    98% MATCH
+                                </div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-80"></div>
+<!-- Glassmorphism AI Insight Tooltip -->
+<div class="absolute bottom-4 left-4 right-4 glass-card p-4 rounded-lg border-accent-gold/40">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-accent-gold text-xs">auto_awesome</span>
+<span class="text-[10px] uppercase font-bold text-accent-gold tracking-widest">AI Insight</span>
+</div>
+<p class="text-xs text-slate-200 leading-relaxed">
+                                        Recommended because you liked <span class="text-accent-gold italic">Interstellar</span>. Matches your preference for <span class="font-bold">Sci-Fi visuals</span>.
+                                    </p>
+</div>
+</div>
+<div class="px-1">
+<h3 class="text-slate-100 font-bold text-lg leading-tight truncate">Celestial Voyage</h3>
+<p class="text-primary/60 text-sm font-medium">Sci-Fi • 2024</p>
+</div>
+</div>
+<!-- Movie Card 2 -->
+<div class="group relative flex flex-col gap-3 hover:scale-105 transition-all duration-300">
+<div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-primary/20">
+<img alt="Movie Poster" class="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Moody black and white cinematic street photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoWFN-BUvYpUO57qIvs0auwO-o5Zafan3YM_HrVJRlIrEh7BaHJlfmwfMqZusvkr1y487GEdVEaj5g7KObXsakImEkWF8nYc5nbOT7gvvCQeBb3YBoOwBEzdkFjAveKDplEO4xCsP0RW1wSyQGiKzArT5RR_2etcSkrHTuY7IliAdSVDA-46vqsKZ0okRm_UPSgtv60tM9PmnLoUjfOm5JR-drp8zHf70YUJIFlbU2x0ohp9ZxRFu7-jmWFt0DdkLADalV9S1jWwY"/>
+<div class="absolute top-3 right-3 bg-accent-gold/90 text-background-dark px-2 py-1 rounded text-xs font-black">
+                                    95% MATCH
+                                </div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/60 to-transparent group-hover:bg-gradient-to-t group-hover:from-primary/40 group-hover:to-transparent"></div>
+</div>
+<div class="px-1">
+<h3 class="text-slate-100 font-bold text-lg leading-tight truncate">The Velvet Shadow</h3>
+<p class="text-primary/60 text-sm font-medium">Noir Thriller • 2023</p>
+</div>
+</div>
+<!-- Movie Card 3 -->
+<div class="group relative flex flex-col gap-3 hover:scale-105 transition-all duration-300">
+<div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-primary/20">
+<img alt="Movie Poster" class="h-full w-full object-cover" data-alt="Abstract colorful flowing geometric shapes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdfOAN65Q6V4h0FZ0Kw-u0pw09abow5lGQEDo3KQm1d3oN2tsIdncLi8TcwWsEyKc_kN7bsX2MMxVZzMNQa2VzHCwGzwHsahzyDHTcTB8axNAAvRv1swXQEzxLU_9OJ2k980-3EfeOEWbvWILyHkDdFUIIkj0bWxod7bsZFr4dSK9u2y21uZXJ4D02fXBGYOgVgCv-DeylWH93ro8UFQ1o0zd20dPCfDiojfeeNeYENQaw36XB2GZDQYZrm33zjnlnocpWduk47wg"/>
+<div class="absolute top-3 right-3 bg-accent-gold/90 text-background-dark px-2 py-1 rounded text-xs font-black">
+                                    92% MATCH
+                                </div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/60 to-transparent"></div>
+</div>
+<div class="px-1">
+<h3 class="text-slate-100 font-bold text-lg leading-tight truncate">Fractured Mind</h3>
+<p class="text-primary/60 text-sm font-medium">Psychological • 2024</p>
+</div>
+</div>
+<!-- Movie Card 4 -->
+<div class="group relative flex flex-col gap-3 hover:scale-105 transition-all duration-300">
+<div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-primary/20">
+<img alt="Movie Poster" class="h-full w-full object-cover" data-alt="Cyberpunk city street at night with neon lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYYFFcNy5DG0y6C6eeQ5awnCwF8divhvVNJBTuptFbd2pG6_FeRTtGYvpMdHer94i0DjSuhzn79b-F1l5bhaO2CNS9M8UTT1t7Zk9MGLt5cST2yPI2gw6JFYPuvJkqSVgre5sQrrYWqSFpKwOyQGhGsqiritL0KZt_rXit79JYh_SSZAm6x168YY4VLgucZADuYvLN_DY4yZYOK2nuH1ax07REuh2tLd65CdlGKYTg-e-3EUT7V6-1XBLaENM89j1QG9GeJ2wbP4c"/>
+<div class="absolute top-3 right-3 bg-accent-gold/90 text-background-dark px-2 py-1 rounded text-xs font-black">
+                                    89% MATCH
+                                </div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/60 to-transparent"></div>
+</div>
+<div class="px-1">
+<h3 class="text-slate-100 font-bold text-lg leading-tight truncate">Neon Pulse</h3>
+<p class="text-primary/60 text-sm font-medium">Cyberpunk • 2023</p>
+</div>
+</div>
+<!-- Movie Card 5 -->
+<div class="group relative flex flex-col gap-3 hover:scale-105 transition-all duration-300">
+<div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-primary/20">
+<img alt="Movie Poster" class="h-full w-full object-cover" data-alt="Epic mountain landscape shrouded in heavy mist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbJbMOCH15JgQrXsPLUFWEChJv4x5KRIdxZqG9_3pfl4LQzCaG2qNQ__CnEa17tCKmEqLDYIoLQw_AfN0CcOe13o8vYvayud7RgGqeUa8EsT79vAyvhPkZhTohMR_7cfrFukPTE1g29qJ_HId0BTY5MxtOTOy1HPwPF5rFDY2YJANMdUj8nMdwKGeKDdvlwDOzqWcrJP3zKrXb8gDh93wtMBfBU-O3J5rRiMefjBKPk_ldCIoJ8UordJlAK2w3Qo7Xj2LIkqrrkM8"/>
+<div class="absolute top-3 right-3 bg-accent-gold/90 text-background-dark px-2 py-1 rounded text-xs font-black">
+                                    87% MATCH
+                                </div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/60 to-transparent"></div>
+</div>
+<div class="px-1">
+<h3 class="text-slate-100 font-bold text-lg leading-tight truncate">The Silent Peak</h3>
+<p class="text-primary/60 text-sm font-medium">Atmospheric Drama • 2022</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Second Row: Recently Watched -->
+<section class="mt-16 pb-20">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">history</span>
+<h2 class="text-slate-100 text-2xl font-bold tracking-tight">Reinforcing Your Taste</h2>
+</div>
+<a class="text-primary text-sm font-bold hover:underline" href="#">View Watch History</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+<div class="flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-video rounded-lg overflow-hidden border border-primary/10">
+<img alt="Past Movie" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="Vintage film reel or projector conceptual image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYMdTcqqCU74tjR_d4ANlm8F91ah2a8A2ygyMdf_kt-CFp-sWXCI9pr64dGVQbnHyEEjlisNMykdS2_RBWmT-uaFZXo2fUCSdThc9iDC-_glkguzKSxtccAgQPOH4Pa9T-GxWAhiAkUXOaMz1ZTb4BhbTgNaYSysZ5dJ2UMoc85vvh6KICehN338Vwoi2W-0ZvGxyn7uE9wzGZcW47iwtnVEYENCzfPsmJYRg0-FCDbxMFDKGn5Pg5Nvv94VloiKie7UnDeWrgTlU"/>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-widest">You Liked</p>
+<h4 class="text-slate-100 text-sm font-bold truncate">Interstellar</h4>
+</div>
+<div class="flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-video rounded-lg overflow-hidden border border-primary/10">
+<img alt="Past Movie" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="Silhouetted figure walking in a futuristic hallway" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQIjbzGFCdJBkew795yjMtp4-stz3uU-FAPEVV21cmKWsK9U6cLSWXaeYT4PcZ6Va5qXZPamkuvkld7bxhv-dM_aoaOXspEvIkIJpiRkKbd_ifAcWqrhwo0eEU1E3AQ-TiYiCFmphJX1voq0RPwEQ_MrFKEQi1IjGXQhWDWmyfJkFW9uKowanjYppwsC4WKaFORYMqqtGMcATJdGkJm9Mal-3GaY5TdBcE1DpZNEG1eKrgrV31-k_J8kyqRF8LjWgn852nQscaRQM"/>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-widest">You Liked</p>
+<h4 class="text-slate-100 text-sm font-bold truncate">Blade Runner 2049</h4>
+</div>
+<div class="flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-video rounded-lg overflow-hidden border border-primary/10">
+<img alt="Past Movie" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="Surreal digital art with vibrant purple and gold hues" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJqkH9tPqDw1M3gU2BmQBLZEIKrvat1Ae_XoVGEoyUr6P_-jtvtGQI7tsMNbmiEf8zkPI1oQnoaIECOeFEOawWhyeCJlDdwiwHGoJ8JmfiF9kKC94thA9WMFC5xDVFdQH4uheoTj4PQl2TaXutdE2ThiUhqq2K6qInArBRAJUckW-3-vhMDLPB6oXvlRUxhpPR9O27ztdoxagEvUgF4_yMI8hUReUfgNd-JUiIZGmatU229IFCxDrxep8WkFScfsueXgU7nOcHyI0"/>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-widest">You Liked</p>
+<h4 class="text-slate-100 text-sm font-bold truncate">Inception</h4>
+</div>
+<div class="flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-video rounded-lg overflow-hidden border border-primary/10">
+<img alt="Past Movie" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="Abstract dark landscape with sharp orange lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM5aKTRtpxdZ7Fq8t-CRRA5VseAq0B5O8Odzk8VHedWjWc1KzNhSwFBtF_T99q140SgAz5YtFk3g5VYY5Wj8Vzz11NuSTwbdSu7ioqOEUlnna1tle4afb8A0TlgoBvHHI6F9ty062cXiOIv1qD6xZnokrrbATT0ygBzXnMHfxRW426IqANE0ntHYFrkWNXmc084agLijg2szzgzM4xPtoDtLSJMnaeA14Wls3xC92AJUOV678qqKVauyL99lW3DlVcLZnyIGVfoRQ"/>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-widest">You Liked</p>
+<h4 class="text-slate-100 text-sm font-bold truncate">Dune</h4>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Bar (Floating Experience) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-6 py-4 glass-card rounded-2xl flex items-center gap-8 shadow-2xl border-primary/30">
+<div class="flex flex-col">
+<span class="text-[10px] text-accent-gold font-bold uppercase tracking-widest">AI Sync Status</span>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-accent-gold animate-pulse"></div>
+<span class="text-sm font-medium text-slate-100">Live Optimization Active</span>
+</div>
+</div>
+<div class="h-8 w-px bg-primary/30"></div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 text-slate-100 text-sm font-bold hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">share</span>
+                        Share Taste
+                    </button>
+<button class="flex items-center gap-2 text-slate-100 text-sm font-bold hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">settings_input_component</span>
+                        Fine Tune
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

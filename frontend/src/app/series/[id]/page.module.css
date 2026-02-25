@@ -1,0 +1,325 @@
+.container {
+    width: 100%;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.playerContainer {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    background-color: #000;
+    position: relative;
+}
+
+.playerPlaceholder {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.playOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.playerPlaceholder:hover .playOverlay {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.mainPlayBtn {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: rgba(115, 17, 212, 0.8);
+    border: 2px solid var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+.mainPlayBtn:hover {
+    transform: scale(1.1);
+    background: var(--primary);
+}
+
+.nowPlayingInfo {
+    position: absolute;
+    bottom: 24px;
+    left: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.content {
+    padding: 40px 5%;
+    display: flex;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.mainInfo {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.title {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--foreground);
+    margin-bottom: 8px;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.matchScore {
+    color: #4ade80;
+    font-weight: 700;
+}
+
+.ageRating {
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.aiExplanation {
+    background: rgba(115, 17, 212, 0.1);
+    border-left: 4px solid var(--primary);
+    padding: 16px;
+    border-radius: 0 8px 8px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    color: #e4e4e7;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.aiIcon {
+    color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.overview {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #d4d4d8;
+    margin-top: 16px;
+}
+
+.actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.iconBtn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* Episodes Section */
+.episodeSection {
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+}
+
+.seasonSelector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.seasonSelector h2 {
+    font-size: 24px;
+}
+
+.seasonBtn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.episodeList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.episodeCard {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.episodeCard:hover {
+    background: var(--surface);
+}
+
+.activeEpisode {
+    background: rgba(115, 17, 212, 0.1);
+    border: 1px solid rgba(115, 17, 212, 0.3);
+}
+
+.activeEpisode:hover {
+    background: rgba(115, 17, 212, 0.15);
+}
+
+.episodeNum {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-muted);
+    width: 32px;
+    text-align: center;
+}
+
+.episodeImageWrapper {
+    width: 140px;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.episodeImage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.epPlayIcon {
+    color: white;
+    opacity: 0.8;
+}
+
+.episodeCard:hover .epPlayIcon {
+    transform: scale(1.1);
+}
+
+.episodeInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.epHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.epTitle {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--font-inter), sans-serif;
+}
+
+.epRuntime {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.progressBar {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: var(--primary);
+}
+
+.sideInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 16px;
+}
+
+.infoGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.value {
+    color: var(--foreground);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .content {
+        flex-direction: column;
+    }
+}
