@@ -1,0 +1,91 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { LiveSearch } from '@/components/shared/LiveSearch';
+
+export function HomeNavBar() {
+    return (
+        <motion.header
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="fixed top-0 z-50 w-full premium-blur bg-black/40 border-b border-white/5 shadow-2xl"
+        >
+            <div className="w-full px-6 lg:px-12 py-5 flex items-center justify-between">
+                <div className="flex items-center gap-12 lg:gap-20">
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="relative">
+                            <span className="material-symbols-outlined text-primary text-4xl fill-1 group-hover:scale-110 transition-transform duration-500">movie_filter</span>
+                            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+                        <h2 className="text-white text-2xl font-black tracking-tighter uppercase">
+                            MOVIE<span className="text-primary italic">WINE</span>
+                        </h2>
+                    </Link>
+
+                    <nav className="hidden lg:flex items-center gap-10">
+                        {['Home', 'Movies', 'TV Shows', 'Community'].map((item) => (
+                            <Link
+                                key={item}
+                                href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                                className="text-white/40 hover:text-white text-[11px] font-black tracking-[0.2em] uppercase transition-all relative group"
+                            >
+                                {item}
+                                <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all group-hover:w-full"></span>
+                            </Link>
+                        ))}
+                    </nav>
+                </div>
+
+                <div className="flex items-center gap-8">
+                    <div className="hidden md:block w-64 lg:w-80">
+                        <LiveSearch />
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                        <button className="relative text-white/40 hover:text-white transition-colors group">
+                            <span className="material-symbols-outlined text-2xl">notifications</span>
+                            <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
+                        </button>
+
+                        <SignedOut>
+                            <div className="flex items-center gap-4">
+                                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                                    <button className="text-white/60 hover:text-white text-[11px] font-black tracking-widest uppercase transition-colors">
+                                        Log In
+                                    </button>
+                                </SignInButton>
+
+                                <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
+                                    <motion.button
+                                        whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(244,192,37,0.3)" }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="bg-primary text-background-dark px-8 py-3 rounded-xl font-black text-[11px] tracking-widest uppercase shadow-xl"
+                                    >
+                                        Join Now
+                                    </motion.button>
+                                </SignUpButton>
+                            </div>
+                        </SignedOut>
+
+                        <SignedIn>
+                            <div className="h-10 w-10 rounded-full p-[2px] bg-gradient-to-tr from-primary to-secondary group cursor-pointer transition-transform hover:scale-110">
+                                <div className="h-full w-full rounded-full bg-background-dark p-[2px]">
+                                    <UserButton
+                                        appearance={{
+                                            elements: {
+                                                avatarBox: "h-full w-full rounded-full"
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </SignedIn>
+                    </div>
+                </div>
+            </div>
+        </motion.header>
+    );
+}

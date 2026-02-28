@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Playfair_Display } from "next/font/google";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -26,21 +34,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
-          rel="stylesheet"
-        />
-      </head>
-      <body
-        className={`${spaceGrotesk.variable} ${playfairDisplay.variable} antialiased`}
-        style={{ fontFamily: "var(--font-space-grotesk, 'Space Grotesk', sans-serif)" }}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+            rel="stylesheet"
+          />
+        </head>
+        <body
+          className={`${spaceGrotesk.variable} ${playfairDisplay.variable} antialiased`}
+          style={{ fontFamily: "var(--font-space-grotesk, 'Space Grotesk', sans-serif)" }}
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "skills": {
+    "Audit Skill": {
+      "source": "bhargavtz/audit-skill",
+      "sourceType": "github",
+      "computedHash": "4ff9e4076a6f99b590021b64912c5d89d5cbe93a265e6ad3a8273677025e5e49"
+    },
+    "clerk": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "computedHash": "fa60121c8ac5217de62cc523dec49fcd561becd8cc07c66b0122fce29e30b66d"
+    },
+    "clerk-custom-ui": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "computedHash": "563c03fc04c3a13e0ba01b514081e08a4d32c040d61ed4f77bf20176bee36636"
+    },
+    "clerk-nextjs-patterns": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "computedHash": "873e0bfd8ca58d2dcbf0e2af7cb69c489f6e37ff64f0340b83087a77406fb9fd"
+    },
+    "clerk-orgs": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "computedHash": "703448d9f2b5c1f165ab971e10ea72b4e065693c839d8b9f1814b72134855787"
+    },
+    "clerk-setup": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "computedHash": "0c28864ddbc5c13376b9725f74c8ff02dd4dc139bffc2ff2f961ed02a54ad858"
+    },
+    "clerk-testing": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "computedHash": "c85c9f9a6067b60b50954317a6a7fa03f052e5cb01032f988fb5e1f62876bcfb"
+    },
+    "clerk-webhooks": {
+      "source": "clerk/skills",
+      "sourceType": "github",
+      "computedHash": "39233b7056673b41322efa9d83d8d7c50c6385f318e1ec2670b0495a67432291"
+    }
+  }
+}
