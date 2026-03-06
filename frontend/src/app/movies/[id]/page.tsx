@@ -4,11 +4,12 @@ import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import Link from 'next/link';
 import { ArrowLeft, Clock, Calendar, Star, TrendingUp } from 'lucide-react';
 
-export default async function MovieDetailsPage({ params }: { params: { id: string } }) {
+export default async function MovieDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     let movie: any = null;
 
     try {
-        movie = await getMovieDetails(parseInt(params.id));
+        const resolvedParams = await params;
+        movie = await getMovieDetails(parseInt(resolvedParams.id));
     } catch (error) {
         console.error("Failed to load movie details:", error);
     }

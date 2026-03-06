@@ -4,11 +4,12 @@ import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import Link from 'next/link';
 import { ArrowLeft, Clock, Calendar, Star } from 'lucide-react';
 
-export default async function TVShowDetailsPage({ params }: { params: { id: string } }) {
+export default async function TVShowDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     let show: any = null;
 
     try {
-        show = await getTVDetails(parseInt(params.id));
+        const resolvedParams = await params;
+        show = await getTVDetails(parseInt(resolvedParams.id));
     } catch (error) {
         console.error("Failed to load TV show details:", error);
     }
