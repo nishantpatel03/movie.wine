@@ -1,19 +1,38 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { LiveSearch } from '@/components/shared/LiveSearch';
 
 export function HomeNavBar() {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
         <motion.header
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="fixed top-0 z-50 w-full premium-blur bg-black/40 border-b border-white/5 shadow-2xl"
+            className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled
+                    ? "bg-background-dark border-b border-white/5 shadow-2xl py-3"
+                    : "bg-gradient-to-b from-background-dark/95 via-background-dark/60 to-transparent py-5"
+                }`}
         >
-            <div className="w-full px-6 lg:px-12 py-5 flex items-center justify-between">
+            <div className="w-full px-6 lg:px-12 flex items-center justify-between">
                 <div className="flex items-center gap-12 lg:gap-20">
                     <Link href="/" className="flex items-center gap-2 group">
                         <div className="relative">

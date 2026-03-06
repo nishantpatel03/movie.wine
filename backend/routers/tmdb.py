@@ -58,6 +58,17 @@ async def get_tv_details(tv_id: int):
     data = await fetch_tmdb(f"/tv/{tv_id}", params={"append_to_response": "videos,credits,similar"})
     return data
 
+@router.get("/tv/{tv_id}/season/{season_number}")
+async def get_tv_season_details(tv_id: int, season_number: int):
+    data = await fetch_tmdb(f"/tv/{tv_id}/season/{season_number}")
+    return data
+
+@router.get("/person/{person_id}")
+async def get_person_details(person_id: int):
+    # append_to_response combined_credits fetches movies and tv shows the person was in
+    data = await fetch_tmdb(f"/person/{person_id}", params={"append_to_response": "combined_credits"})
+    return data
+
 @router.get("/search/multi")
 async def search_multi(query: str, page: int = 1):
     data = await fetch_tmdb("/search/multi", params={"query": query, "page": page})

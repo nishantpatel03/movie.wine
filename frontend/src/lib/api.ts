@@ -89,6 +89,14 @@ export async function getTVDetails(id: number): Promise<any> {
     return fetchFromBackend(`/tv/${id}`);
 }
 
+export async function getTVSeasonDetails(tvId: number, seasonNumber: number): Promise<any> {
+    return fetchFromBackend(`/tv/${tvId}/season/${seasonNumber}`);
+}
+
+export async function getPersonDetails(id: number): Promise<any> {
+    return fetchFromBackend(`/person/${id}`);
+}
+
 export async function searchMulti(query: string, page: number = 1): Promise<TMDBResponse<any>> {
     return fetchFromBackend(`/search/multi`, { query, page });
 }
