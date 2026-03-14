@@ -3,170 +3,181 @@ import { HomeHeroSection } from '@/components/home/HomeHeroSection';
 import { TopPicksBento } from '@/components/home/TopPicksBento';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
 import Link from 'next/link';
+import WhySection from '@/components/home/WhySection';
+import TopTenSlider from '@/components/home/TopTenSlider';
 
 export default async function HomePage() {
-  // Fetch real data on the server
-  let trendingMovies = [];
+  // Fetch trending all (for hero + top picks), movies, and tv in parallel
+  let trendingAll: any[] = [];
+  let trendingMovies: any[] = [];
+  let trendingSeries: any[] = [];
+
   try {
-    const response = await getTrending('all', 'day');
-    trendingMovies = response.results;
+    const [allRes, moviesRes, seriesRes] = await Promise.all([
+      getTrending('all', 'day'),
+      getTrending('movie', 'week'),
+      getTrending('tv', 'week'),
+    ]);
+    trendingAll = allRes.results;
+    trendingMovies = moviesRes.results;
+    trendingSeries = seriesRes.results;
   } catch (e) {
-    console.error("Error fetching trending data inside Server Component:", e);
+    console.error('Error fetching trending data:', e);
   }
 
-  // Fallback to placeholder if backend fails
-  const topPicks = trendingMovies.length > 5 ? trendingMovies : [];
-  const heroMovie = topPicks.length > 0 ? topPicks[0] : null;
+  const topPicks = trendingAll.length > 5 ? trendingAll : [];
+  // Use the first 8 trending items as hero slides
+  const heroSlides = topPicks.slice(0, 8).filter((m: any) => m.backdrop_path);
+
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-dark text-slate-100 font-display">
-
-      {/* Extracted Client Navbar */}
+    <div style={{
+      position: 'relative',
+      display: 'flex',
+      minHeight: '100svh',
+      width: '100%',
+      flexDirection: 'column',
+      overflowX: 'hidden',
+      background: '#0a0904',
+      color: '#f1f5f9',
+      fontFamily: "'Space Grotesk', sans-serif",
+    }}>
+      {/* Header — unchanged */}
       <HomeNavBar />
 
-      <main className="flex-1">
-        {/* Extracted Client Hero section passing real TMDB data */}
-        <HomeHeroSection trendingMovie={heroMovie} />
+      <main style={{ flex: 1 }}>
+        {/* Hero slideshow */}
+        <HomeHeroSection slides={heroSlides} />
 
-        {/* Extracted Client Bento Grid passing real TMDB data */}
+        {/* Top 10 Slider — Movies + Series */}
+        <TopTenSlider topMovies={trendingMovies} topSeries={trendingSeries} />
+
+        {/* Top Picks Bento */}
         <TopPicksBento topPicks={topPicks} />
 
-        {/* Personalized Discovery Section - Premium AI Overhaul */}
-        <section className="relative px-6 lg:px-12 py-32 overflow-hidden">
-          {/* Subtle background effects */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10 animate-pulse"></div>
-          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-secondary/5 rounded-full blur-[100px] -z-10"></div>
-
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-20">
-            <div className="w-full lg:w-1/2 space-y-10">
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full premium-blur bg-white/5 border border-white/10 shadow-lg">
-                <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-                <span className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">MovieWine Intelligence</span>
-              </div>
-
-              <div className="space-y-6">
-                <h2 className="text-5xl lg:text-7xl font-serif text-white leading-[0.9] tracking-tighter">
-                  Not just Search. <br />
-                  <span className="text-secondary italic">Discovery.</span>
-                </h2>
-                <p className="text-white/60 text-xl leading-relaxed max-w-lg font-medium">
-                  Tired of scrolling? Converge your mood, genre, and time into a single prompt. Our AI architect crafts your perfect cinematic evening.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-6">
-                <button className="gold-glow bg-primary text-background-dark px-10 py-4 rounded-2xl font-black text-sm tracking-widest transition-all scale-100 hover:scale-105 active:scale-95 shadow-2xl">
-                  LAUNCH AI CHAT
-                </button>
-                <div className="flex -space-x-3 items-center">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-background-dark bg-background-light overflow-hidden shadow-xl">
-                      <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" className="w-full h-full object-cover opacity-80" />
-                    </div>
-                  ))}
-                  <span className="pl-4 text-xs font-black text-white/40 tracking-widest uppercase italic">Used by 2k+ Cinephiles</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full lg:w-1/2 relative">
-              {/* The Holographic Container */}
-              <div className="relative aspect-square max-w-[500px] mx-auto group">
-                {/* Rotating Inner Rings */}
-                <div className="absolute inset-x-4 inset-y-4 border border-white/5 rounded-full animate-spin-slow"></div>
-                <div className="absolute inset-x-12 inset-y-12 border border-primary/10 rounded-full animate-reverse-spin border-dashed"></div>
-
-                {/* Main Glass Card */}
-                <div className="absolute inset-0 premium-blur bg-white/[0.03] rounded-[3rem] border border-white/10 shadow-2xl overflow-hidden flex items-center justify-center">
-                  <div className="absolute inset-0 radial-mask bg-gradient-to-br from-primary/10 via-transparent to-secondary/10"></div>
-
-                  {/* AI Pulse Avatar */}
-                  <div className="relative flex flex-col items-center gap-6">
-                    <div className="w-32 h-32 rounded-full bg-background-dark flex items-center justify-center relative group-hover:scale-110 transition-transform duration-700">
-                      <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse"></div>
-                      <span className="material-symbols-outlined text-primary text-5xl fill-1 z-10 drop-shadow-[0_0_15px_rgba(244,192,37,0.8)]">auto_awesome</span>
-
-                      {/* Floating bits */}
-                      <span className="absolute -top-4 -right-4 w-3 h-3 bg-secondary rounded-full animate-float shadow-[0_0_10px_rgba(157,78,221,0.5)]"></span>
-                      <span className="absolute -bottom-2 -left-6 w-2 h-2 bg-primary rounded-full animate-float-delayed shadow-[0_0_10px_rgba(244,192,37,0.5)]"></span>
-                    </div>
-
-                    <div className="text-center space-y-2">
-                      <p className="text-white text-lg font-serif italic">"I'm feeling nostalgic..."</p>
-                      <div className="h-[2px] w-24 mx-auto bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-                      <p className="text-white/40 text-[10px] font-black tracking-[0.3em] uppercase">Processing Intent</p>
-                    </div>
-                  </div>
-
-                  {/* UI Chat Bubbles Floating */}
-                  <div className="absolute top-12 -right-8 premium-blur bg-white/5 border border-white/10 rounded-2xl p-4 text-[10px] text-white/80 max-w-[150px] shadow-2xl animate-float">
-                    How about a 90's Neo-noir?
-                  </div>
-                  <div className="absolute bottom-12 -left-8 premium-blur bg-primary/10 border border-primary/20 rounded-2xl p-4 text-[10px] text-primary max-w-[150px] shadow-2xl animate-float-delayed">
-                    Perfect. Curate the list.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
+        {/* Why MovieWine */}
+        <WhySection />
       </main>
 
-      {/* Footer - Professional Redesign */}
-      <footer className="w-full border-t border-white/5 bg-[#0A0A0A] px-6 py-20 lg:px-12 relative overflow-hidden">
-        {/* Decorative Grid */}
-        <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:32px_32px]"></div>
+      {/* ── Footer ── */}
+      <footer style={{
+        borderTop: '1px solid rgba(255,255,255,0.05)',
+        background: '#080703',
+        padding: '64px 24px 40px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Subtle grid texture */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+          pointerEvents: 'none',
+        }} />
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
-          <div className="col-span-1 md:col-span-1 space-y-6">
-            <Link href="/" className="text-2xl font-black tracking-tighter text-white flex items-center gap-2">
-              MOVIE<span className="text-primary italic">WINE</span>
-            </Link>
-            <p className="text-white/40 text-sm leading-relaxed">
-              Curating the finest cinematic experiences through artificial intelligence and passion.
+        <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          {/* Main footer links */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 48, marginBottom: 56 }}>
+            {/* Brand */}
+            <div>
+              <Link href="/" style={{ textDecoration: 'none' }}>
+                <span style={{ fontSize: '1.3rem', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff' }}>
+                  MOVIE<span style={{ color: '#f4c025', fontStyle: 'italic' }}>WINE</span>
+                </span>
+              </Link>
+              <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '13px', lineHeight: 1.7, marginTop: 14, maxWidth: 200 }}>
+                Curating cinema through AI and passion.
+              </p>
+            </div>
+
+            {/* Platform */}
+            <div>
+              <h4 style={{ color: '#fff', fontSize: '10px', fontWeight: 900, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>Platform</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  { label: 'Browse Movies', href: '/movies' },
+                  { label: 'TV Series', href: '/tv-shows' },
+                  { label: 'Community', href: '/community' },
+                ].map(link => (
+                  <li key={link.href}>
+                    <Link href={link.href} style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', textDecoration: 'none', fontWeight: 500 }}
+                      className="hover:text-primary">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Community */}
+            <div>
+              <h4 style={{ color: '#fff', fontSize: '10px', fontWeight: 900, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>Community</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  { label: 'Discussions', href: '/community' },
+                  { label: 'Discord', href: '#' },
+                  { label: 'Newsletter', href: '#' },
+                ].map(link => (
+                  <li key={link.label}>
+                    <Link href={link.href} style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', textDecoration: 'none', fontWeight: 500 }}
+                      className="hover:text-primary">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Social */}
+            <div>
+              <h4 style={{ color: '#fff', fontSize: '10px', fontWeight: 900, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>Follow Us</h4>
+              <div style={{ display: 'flex', gap: 10 }}>
+                {[
+                  { label: 'X', icon: 'language' },
+                  { label: 'IG', icon: 'photo_camera' },
+                  { label: 'DC', icon: 'forum' },
+                ].map(s => (
+                  <Link key={s.label} href="#" style={{
+                    width: 38, height: 38, borderRadius: '50%',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'rgba(255,255,255,0.4)',
+                    textDecoration: 'none',
+                    transition: 'border-color 0.2s, color 0.2s',
+                    background: 'rgba(255,255,255,0.04)',
+                  }}
+                    className="hover:border-primary hover:text-primary"
+                    title={s.label}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{s.icon}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div style={{
+            borderTop: '1px solid rgba(255,255,255,0.05)',
+            paddingTop: 28,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+          }}>
+            <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+              © {new Date().getFullYear()} MovieWine Studios. Built for Cinephiles.
             </p>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-xs font-black tracking-widest text-white uppercase">Platform</h4>
-            <ul className="space-y-2">
-              <li><Link href="/movies" className="text-white/40 hover:text-primary transition-colors text-sm font-medium">Browse Movies</Link></li>
-              <li><Link href="/tv-shows" className="text-white/40 hover:text-primary transition-colors text-sm font-medium">TV Series</Link></li>
-              <li><Link href="/ai-discovery" className="text-white/40 hover:text-primary transition-colors text-sm font-medium">AI Discovery</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-xs font-black tracking-widest text-white uppercase">Community</h4>
-            <ul className="space-y-2">
-              <li><Link href="#" className="text-white/40 hover:text-primary transition-colors text-sm font-medium">Discussion</Link></li>
-              <li><Link href="#" className="text-white/40 hover:text-primary transition-colors text-sm font-medium">Discord</Link></li>
-              <li><Link href="#" className="text-white/40 hover:text-primary transition-colors text-sm font-medium">Newsletter</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-xs font-black tracking-widest text-white uppercase">Social</h4>
-            <div className="flex items-center gap-4">
-              {['Twitter', 'Instagram', 'Dribbble'].map(social => (
-                <Link key={social} href="#" className="w-10 h-10 rounded-full flex items-center justify-center premium-blur bg-white/5 border border-white/10 hover:border-primary/50 text-white/40 hover:text-primary transition-all">
-                  <span className="sr-only">{social}</span>
-                  <div className="w-5 h-5 bg-current rounded-sm opacity-20"></div>
+            <div style={{ display: 'flex', gap: 28 }}>
+              {['Privacy', 'Terms', 'Contact'].map(l => (
+                <Link key={l} href="#" style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', textDecoration: 'none' }}
+                  className="hover:text-white/60">
+                  {l}
                 </Link>
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-white/20 text-[10px] font-black tracking-widest uppercase">
-            © {new Date().getFullYear()} MOVIEWINE STUDIOS. BUILT FOR CINEPHILES.
-          </p>
-          <div className="flex items-center gap-8">
-            <Link href="#" className="text-white/20 hover:text-white transition-colors text-[10px] font-black tracking-widest uppercase">Privacy</Link>
-            <Link href="#" className="text-white/20 hover:text-white transition-colors text-[10px] font-black tracking-widest uppercase">Terms</Link>
-            <Link href="#" className="text-white/20 hover:text-white transition-colors text-[10px] font-black tracking-widest uppercase">Contact</Link>
           </div>
         </div>
       </footer>
