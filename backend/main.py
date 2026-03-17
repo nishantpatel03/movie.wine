@@ -3,13 +3,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import engine, Base, get_db
-from routers import tmdb
+import models
+from routers import tmdb, community
+
+# Create the database tables
+Base.metadata.create_all(bind=engine)
 
 # Create the FastAPI app
 app = FastAPI(title="MovieWine Backend API")
 
 # Include the routers
 app.include_router(tmdb.router)
+app.include_router(community.router)
 
 # Setup CORS to allow Next.js frontend to communicate
 app.add_middleware(

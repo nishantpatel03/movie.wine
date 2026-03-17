@@ -24,7 +24,7 @@ export default async function MoviesPage() {
             <main className="flex-1">
 
                 {/* Page Hero */}
-                <section className="relative w-full pt-32 lg:pt-40 pb-20 px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between border-b border-white/10 overflow-hidden">
+                <section className="relative w-full pb-20 px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between border-b border-white/10 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/20 to-background-dark z-0"></div>
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
 

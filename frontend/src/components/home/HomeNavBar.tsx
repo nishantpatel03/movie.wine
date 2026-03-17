@@ -27,10 +27,7 @@ export function HomeNavBar() {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled
-                    ? "bg-background-dark border-b border-white/5 shadow-2xl py-3"
-                    : "bg-gradient-to-b from-background-dark/95 via-background-dark/60 to-transparent py-5"
-                }`}
+            className={`sticky top-0 z-[100] w-full transition-all duration-500 bg-background-dark border-b border-white/5 shadow-2xl ${isScrolled ? "py-3" : "py-5"}`}
         >
             <div className="w-full px-6 lg:px-12 flex items-center justify-between">
                 <div className="flex items-center gap-12 lg:gap-20">
@@ -55,6 +52,15 @@ export function HomeNavBar() {
                                 <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all group-hover:w-full"></span>
                             </Link>
                         ))}
+                        <SignedIn>
+                            <Link
+                                href="/my-list"
+                                className="text-white/40 hover:text-white text-[11px] font-black tracking-[0.2em] uppercase transition-all relative group"
+                            >
+                                My List
+                                <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all group-hover:w-full"></span>
+                            </Link>
+                        </SignedIn>
                     </nav>
                 </div>
 
@@ -90,16 +96,20 @@ export function HomeNavBar() {
                         </SignedOut>
 
                         <SignedIn>
-                            <div className="h-10 w-10 rounded-full p-[2px] bg-gradient-to-tr from-primary to-secondary group cursor-pointer transition-transform hover:scale-110">
-                                <div className="h-full w-full rounded-full bg-background-dark p-[2px]">
+                            <div className="relative group cursor-pointer">
+                                {/* Circular border wrapper */}
+                                <div className="h-10 w-10 rounded-full flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-all duration-300 bg-white/5 p-[1px]">
                                     <UserButton
                                         appearance={{
                                             elements: {
-                                                avatarBox: "h-full w-full rounded-full"
+                                                userButtonAvatarBox: "h-8 w-8",
+                                                userButtonTrigger: "focus:shadow-none focus:outline-none"
                                             }
                                         }}
                                     />
                                 </div>
+                                {/* Subtle glow effect on hover */}
+                                <div className="absolute inset-0 bg-primary/10 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                             </div>
                         </SignedIn>
                     </div>

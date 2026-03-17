@@ -28,6 +28,8 @@ export const metadata: Metadata = {
   description: "AI-Powered Movie & Series Recommendation Engine",
 };
 
+import RootLayoutClient from "@/components/shared/SyncUser";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,6 +50,7 @@ export default function RootLayout({
           className={`${spaceGrotesk.variable} ${playfairDisplay.variable} antialiased`}
           style={{ fontFamily: "var(--font-space-grotesk, 'Space Grotesk', sans-serif)" }}
         >
+          <RootLayoutClient />
           {children}
         </body>
       </html>
