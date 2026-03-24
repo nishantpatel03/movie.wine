@@ -8,14 +8,14 @@ import Link from 'next/link';
 // Animation Variants
 const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as any } }
 };
 
 const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        transition: { staggerChildren: 0.1 }
+        transition: { staggerChildren: 0.08 }
     }
 };
 
@@ -44,18 +44,18 @@ export function TvShowsContent({ initialShows }: { initialShows: TVShow[] }) {
         : initialShows.filter(m => m.genre_ids.includes(filterToId[activeFilter]));
 
     return (
-        <section className="px-6 lg:px-12 py-12">
+        <section className="px-6 lg:px-12 py-16 max-w-screen-2xl mx-auto">
             {/* Filters */}
-            <div className="flex flex-wrap gap-4 mb-12">
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
                 {filters.map((filter) => (
                     <motion.button
                         key={filter}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveFilter(filter)}
-                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all border ${activeFilter === filter
-                            ? 'bg-primary border-primary text-background-dark shadow-[0_0_15px_rgba(244,192,37,0.3)]'
-                            : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white'
+                        className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-300 ${activeFilter === filter
+                            ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                            : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white backdrop-blur-md border border-white/5'
                             }`}
                     >
                         {filter}
@@ -69,7 +69,7 @@ export function TvShowsContent({ initialShows }: { initialShows: TVShow[] }) {
                 initial="hidden"
                 animate="visible"
                 key={activeFilter} // Re-trigger animation when filter changes
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 gap-y-12"
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-12"
             >
                 {filteredShows.map((show) => (
                     <motion.div
@@ -79,45 +79,49 @@ export function TvShowsContent({ initialShows }: { initialShows: TVShow[] }) {
                     >
                         <Link href={`/tv-shows/${show.id}`} className="flex flex-col h-full w-full">
                             {/* Poster Image */}
-                            <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-4 border border-white/5 shadow-lg group-hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all">
+                            <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-5 bg-slate-800/50 shadow-xl group-hover:shadow-[0_20px_40px_-15px_rgba(139,92,246,0.2)] transition-all duration-500 border border-white/5 group-hover:border-accent-purple/30">
                                 <img
                                     src={getImageUrl(show.poster_path)}
                                     alt={show.name}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    loading="lazy"
                                 />
 
+                                {/* Premium Vignette Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+
                                 {/* Hover Play Button Overlay */}
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 backdrop-blur-[2px]">
                                     <motion.div
-                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        initial={{ scale: 0.5, opacity: 0 }}
                                         whileInView={{ scale: 1, opacity: 1 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="h-16 w-16 bg-white/90 text-background-dark rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.5)] transform translate-y-4 group-hover:translate-y-0"
+                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                        className="h-16 w-16 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full flex items-center justify-center shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
                                     >
-                                        <span className="material-symbols-outlined text-3xl font-bold ml-1">play_arrow</span>
+                                        <span className="material-symbols-outlined text-3xl ml-1">play_arrow</span>
                                     </motion.div>
                                 </div>
 
                                 {/* Rating Badges */}
                                 {show.vote_average > 0 && (
-                                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 flex items-center gap-1 px-2 py-1 rounded text-[10px] font-bold tracking-wider text-white">
-                                        <span className="material-symbols-outlined text-primary text-[12px]">star</span>
+                                    <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider text-white shadow-lg">
+                                        <span className="material-symbols-outlined text-accent-purple text-[14px]">star</span>
                                         {show.vote_average.toFixed(1)}
                                     </div>
                                 )}
                             </div>
 
                             {/* Metadata Details */}
-                            <div className="flex-1 flex flex-col">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-bold text-accent-purple tracking-wider uppercase truncate max-w-[60%]">
+                            <div className="flex-1 flex flex-col px-1">
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <span className="text-[10px] font-bold text-accent-purple/90 tracking-widest uppercase truncate max-w-[65%]">
                                         {show.genre_ids[0] ? GENRE_MAP[show.genre_ids[0]] : 'TV Show'}
                                     </span>
                                     <span className="text-xs text-slate-500 font-medium">
-                                        {show.first_air_date ? show.first_air_date.substring(0, 4) : 'N/A'}
+                                        {show.first_air_date ? show.first_air_date.substring(0, 4) : '—'}
                                     </span>
                                 </div>
-                                <h3 className="text-white font-serif italic text-lg group-hover:text-accent-purple transition-colors line-clamp-2">
+                                <h3 className="text-white font-medium text-base group-hover:text-accent-purple transition-colors line-clamp-2 leading-snug">
                                     {show.name}
                                 </h3>
                             </div>
@@ -127,9 +131,12 @@ export function TvShowsContent({ initialShows }: { initialShows: TVShow[] }) {
             </motion.div>
 
             {filteredShows.length === 0 && (
-                <div className="w-full py-20 text-center text-slate-500">
-                    <span className="material-symbols-outlined text-4xl mb-4 block opacity-50">live_tv</span>
-                    <p>No episodes found for this genre on our network.</p>
+                <div className="w-full py-32 flex flex-col items-center justify-center text-slate-500">
+                    <div className="h-24 w-24 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                        <span className="material-symbols-outlined text-4xl opacity-50">live_tv</span>
+                    </div>
+                    <h3 className="text-xl text-white font-medium mb-2">No episodes found</h3>
+                    <p>We couldn't find any titles matching this genre.</p>
                 </div>
             )}
         </section>

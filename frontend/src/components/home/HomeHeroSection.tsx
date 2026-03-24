@@ -16,13 +16,13 @@ const slideVariants = {
         x: '0%',
         opacity: 1,
         scale: 1,
-        transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
+        transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as any },
     },
     exit: (dir: number) => ({
         x: dir > 0 ? '-5%' : '5%',
         opacity: 0,
         scale: 0.97,
-        transition: { duration: 0.5, ease: 'easeIn' },
+        transition: { duration: 0.5, ease: 'easeIn' as any },
     }),
 };
 
@@ -31,7 +31,7 @@ const contentVariants = {
     visible: (delay = 0) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.65, delay, ease: [0.16, 1, 0.3, 1] }
+        transition: { duration: 0.65, delay, ease: [0.16, 1, 0.3, 1] as any }
     }),
 };
 
@@ -343,7 +343,7 @@ export function HomeHeroSection({ slides }: { slides: any[] }) {
                             key={`bar-${index}`}
                             initial={{ width: '0%' }}
                             animate={{ width: '100%' }}
-                            transition={{ duration: SLIDE_INTERVAL / 1000, ease: 'linear' }}
+                            transition={{ duration: SLIDE_INTERVAL / 1000, ease: 'linear' as any }}
                             style={{ height: '100%', background: '#f4c025', borderRadius: 2 }}
                         />
                     </div>

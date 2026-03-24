@@ -24,13 +24,17 @@ export default async function MoviesPage() {
             <main className="flex-1">
 
                 {/* Page Hero */}
-                <section className="relative w-full pb-20 px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between border-b border-white/10 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/20 to-background-dark z-0"></div>
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
+                <section className="relative w-full pt-32 pb-24 px-6 lg:px-12 flex flex-col items-center justify-center border-b border-white/5 overflow-hidden text-center">
+                    <div className="absolute inset-0 bg-background-dark z-0"></div>
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
 
-                    <div className="relative z-10 max-w-3xl animate-in slide-in-from-left duration-700">
-                        <h1 className="text-5xl md:text-7xl font-serif italic text-white mb-6">The Archives</h1>
-                        <p className="text-xl text-slate-300 max-w-xl leading-relaxed">
+                    <div className="relative z-10 max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6">
+                            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                            <span className="text-xs font-medium tracking-wider text-slate-300 uppercase">Cinema Collection</span>
+                        </div>
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif italic mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/50 tracking-tight">The Archives</h1>
+                        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
                             Explore our curated collection of cinematic masterpieces. From timeless classics to modern marvels.
                         </p>
                     </div>
@@ -42,7 +46,7 @@ export default async function MoviesPage() {
             </main>
 
             {/* Shared Footer (Copied from Home) */}
-            <footer className="border-t border-white/5 bg-background-dark py-16 px-10">
+            <footer className="border-t border-white/5 bg-background-dark py-16 px-10 relative z-10">
                 <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12">
                     <div className="col-span-2 space-y-6">
                         <div className="flex items-center gap-2">

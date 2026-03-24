@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 router = APIRouter(prefix="/tmdb", tags=["TMDB"])
 
 # Dynamically loud .env because it may have changed after server startup
-TMDB_BASE_URL = "https://api.themoviedb.org/3"
+TMDB_BASE_URL = "https://api.tmdb.org/3"
 
 def fetch_tmdb(endpoint: str, params: Optional[dict] = None):
     load_dotenv(override=True)
