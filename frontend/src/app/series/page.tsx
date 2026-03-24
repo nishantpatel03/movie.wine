@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
-import { TvShowsContent } from '@/components/tvshows/TvShowsContent';
+import { SeriesContent } from '@/components/series/SeriesContent';
 import { discoverTV } from '@/lib/api';
 
 // This is now a Server Component
@@ -33,7 +33,7 @@ export default async function TvShowsPage() {
                             <span className="w-2 h-2 rounded-full bg-accent-purple animate-pulse"></span>
                             <span className="text-xs font-medium tracking-wider text-slate-300 uppercase">Series Collection</span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif italic mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/50 tracking-tight">Television</h1>
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif italic mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/50 tracking-tight">Series Library</h1>
                         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
                             Binge-worthy stories, unforgettable characters. Dive into the world's most compelling episodic content.
                         </p>
@@ -41,7 +41,7 @@ export default async function TvShowsPage() {
                 </section>
 
                 {/* Filters & Grid Section (Client Component) */}
-                <TvShowsContent initialShows={initialShows} />
+                <SeriesContent initialShows={initialShows} />
 
             </main>
 
@@ -59,7 +59,7 @@ export default async function TvShowsPage() {
                         <h4 className="text-white font-bold mb-6">Explore</h4>
                         <ul className="space-y-4 text-slate-500 text-sm">
                             <li><Link href="/movies" className="hover:text-primary transition-colors">Movies</Link></li>
-                            <li><Link href="/tv-shows" className="hover:text-primary transition-colors">TV Shows</Link></li>
+                            <li><Link href="/series" className="hover:text-primary transition-colors">Series</Link></li>
                         </ul>
                     </div>
                 </div>

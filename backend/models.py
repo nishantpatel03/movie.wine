@@ -20,6 +20,7 @@ class User(Base):
     hosted_parties = relationship("WatchParty", back_populates="host")
     watch_party_attendances = relationship("WatchPartyAttendee", back_populates="user")
     likes = relationship("DiscussionLike", back_populates="user")
+    lists = relationship("UserList", back_populates="owner", cascade="all, delete")
 
 class Discussion(Base):
     __tablename__ = "discussions"
@@ -92,3 +93,31 @@ class WatchPartyAttendee(Base):
     # Relationships
     watch_party = relationship("WatchParty", back_populates="attendees")
     user = relationship("User", back_populates="watch_party_attendances")
+
+
+class UserList(Base):
+    __tablename__ = "user_lists"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.clerk_id"), nullable=False, index=True)
+    name = Column(String, nullable=False)  # e.g. "Watch Later", "Favourites"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    owner = relationship("User", back_populates="lists")
+    items = relationship("UserListItem", back_populates="list", cascade="all, delete-orphan")
+
+
+class UserListItem(Base):
+    __tablename__ = "user_list_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    list_id = Column(Integer, ForeignKey("user_lists.id"), nullable=False, index=True)
+    tmdb_id = Column(Integer, nullable=False)
+    media_type = Column(String, nullable=False)  # "movie" or "tv"
+    title = Column(String, nullable=False)
+    poster_path = Column(String, nullable=True)
+    added_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    list = relationship("UserList", back_populates="items")

@@ -42,7 +42,7 @@ export function HomeNavBar() {
                     </Link>
 
                     <nav className="hidden lg:flex items-center gap-10">
-                        {['Home', 'Movies', 'TV Shows', 'Community'].map((item) => (
+                        {['Home', 'Movies', 'Series', 'Community'].map((item) => (
                             <Link
                                 key={item}
                                 href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}

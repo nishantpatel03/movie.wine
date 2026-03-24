@@ -36,7 +36,7 @@ function RankNumber({ rank }: { rank: number }) {
 }
 
 function MediaCard({ item, rank, mediaType }: { item: MediaItem; rank: number; mediaType: 'movie' | 'tv' }) {
-    const href = `/${mediaType === 'tv' ? 'tv-shows' : 'movies'}/${item.id}`;
+    const href = `/${mediaType === 'tv' ? 'series' : 'movies'}/${item.id}`;
     const title = item.title || item.name || '';
     const year = (item.release_date || item.first_air_date || '').substring(0, 4);
     const rating = item.vote_average?.toFixed(1);

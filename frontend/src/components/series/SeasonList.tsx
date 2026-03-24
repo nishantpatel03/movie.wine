@@ -61,4 +61,3 @@ export function SeasonList({ tvId, seriesName, seasons }: SeasonListProps) {
         </div>
     );
 }
-

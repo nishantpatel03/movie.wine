@@ -59,7 +59,7 @@ export function LiveSearch() {
                 <Search className="text-white/50 w-4 h-4 shrink-0 mr-3 group-focus-within:text-primary transition-colors" />
                 <input
                     className="bg-transparent text-sm focus:outline-none placeholder:text-slate-400 text-white w-full"
-                    placeholder="Search movies & TV..."
+                    placeholder="Search movies & series..."
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -85,7 +85,7 @@ export function LiveSearch() {
                             {results.map((item) => (
                                 <Link
                                     key={item.id}
-                                    href={`/${item.media_type === 'tv' ? 'tv-shows' : 'movies'}/${item.id}`}
+                                    href={`/${item.media_type === 'tv' ? 'series' : 'movies'}/${item.id}`}
                                     onClick={() => setIsOpen(false)}
                                     className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/10 group transition-colors"
                                 >
@@ -99,7 +99,7 @@ export function LiveSearch() {
                                             {item.title || item.name}
                                         </h4>
                                         <div className="flex items-center gap-2 text-xs text-slate-400">
-                                            <span>{item.media_type === 'tv' ? 'TV' : 'Movie'}</span>
+                                            <span>{item.media_type === 'tv' ? 'Series' : 'Movie'}</span>
                                             <span>•</span>
                                             <span>{item.release_date?.substring(0, 4) || item.first_air_date?.substring(0, 4)}</span>
                                             <span>•</span>

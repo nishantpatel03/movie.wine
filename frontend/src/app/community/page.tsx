@@ -91,7 +91,7 @@ export default function CommunityPage() {
                             {[
                                 { label: "HOME", href: "/" },
                                 { label: "FILMS", href: "/movies" },
-                                { label: "SERIES", href: "/tv-shows" },
+                                { label: "SERIES", href: "/series" },
                                 { label: "COMMUNITY", href: "/community", active: true },
                             ].map(item => (
                                 <Link
@@ -442,7 +442,7 @@ export default function CommunityPage() {
                             <ul className="space-y-3 test-sm text-slate-400">
                                 <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
                                 <li><Link href="/movies" className="hover:text-primary transition-colors">Films</Link></li>
-                                <li><Link href="/tv-shows" className="hover:text-primary transition-colors">Series</Link></li>
+                                <li><Link href="/series" className="hover:text-primary transition-colors">Series</Link></li>
                             </ul>
                         </div>
                         <div className="space-y-6">

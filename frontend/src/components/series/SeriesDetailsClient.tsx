@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { ArrowLeft, Star, PlayCircle, Plus, Check } from 'lucide-react';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
-import { SeasonList } from '@/components/tv/SeasonList';
+import { SeasonList } from './SeasonList';
+import { AddToListButton } from '@/components/shared/AddToListButton';
 import { getImageUrl } from '@/lib/api';
 
 // Shared Animation Variants
@@ -23,16 +24,15 @@ const fadeInUp: Variants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98] as any } }
 };
 
-interface TVShowDetailsClientProps {
+interface SeriesDetailsClientProps {
     show: any;
     backdropUrl: string;
     posterUrl: string;
     videoKey: string | null;
 }
 
-export function TVShowDetailsClient({ show, backdropUrl, posterUrl, videoKey }: TVShowDetailsClientProps) {
+export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: SeriesDetailsClientProps) {
     const [activeTab, setActiveTab] = useState('episodes');
-    const [inList, setInList] = useState(false);
 
     if (!show) return null;
 
@@ -40,7 +40,7 @@ export function TVShowDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
     const dateRange = `${show.first_air_date?.substring(0, 4) || ''} – ${endYear || ''}`;
 
     return (
-        <div className="min-h-screen w-full flex flex-col bg-[#0a0904] text-slate-100 font-display pb-20 overflow-x-hidden selection:bg-primary/30 selection:text-white">
+        <div className="min-h-screen w-full flex flex-col bg-background-dark text-slate-100 font-display pb-20 overflow-x-hidden selection:bg-primary/30 selection:text-white">
             <HomeNavBar />
 
             {/* HERO SECTION */}
@@ -126,17 +126,12 @@ export function TVShowDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                     <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-3 mt-4">
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
                         
-                        <button 
-                            onClick={() => setInList(!inList)}
-                            className={`flex items-center gap-2 px-6 py-3.5 rounded-full text-[15px] font-medium transition-all ${
-                                inList 
-                                ? 'bg-primary/15 border border-primary/40 text-primary hover:bg-primary/20 hover:border-primary/50' 
-                                : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20'
-                            }`}
-                        >
-                            {inList ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                            {inList ? 'In My List' : 'My List'}
-                        </button>
+                        <AddToListButton
+                            tmdbId={show.id}
+                            mediaType="tv"
+                            title={show.name}
+                            posterPath={show.poster_path}
+                        />
                     </motion.div>
                 </motion.div>
             </div>
@@ -234,11 +229,11 @@ export function TVShowDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                     )}
                 </div>
 
-                {/* RIGHT COLUMN — Show Info */}
+                {/* RIGHT COLUMN — Series Info */}
                 <div className="lg:pt-[76px]">
                     <div className="bg-white/[0.025] border border-white/[0.07] rounded-[18px] p-7 sticky top-[100px]">
                         <h3 className="text-[11px] font-bold tracking-[1.5px] uppercase text-white/30 mb-6 pb-5 border-b border-white/10">
-                            Show Information
+                            Series Information
                         </h3>
 
                         <div className="flex flex-col gap-6">

@@ -75,8 +75,8 @@ export function HomeHeroSection({ slides }: { slides: any[] }) {
     const overview = movie?.overview || '';
     const year = (movie?.release_date || movie?.first_air_date || '').substring(0, 4);
     const rating = movie?.vote_average?.toFixed(1);
-    const mediaType = movie?.media_type === 'tv' ? 'tv-shows' : 'movies';
-    const mediaLabel = movie?.media_type === 'tv' ? 'TV Series' : 'Film';
+    const mediaType = movie?.media_type === 'tv' ? 'series' : 'movies';
+    const mediaLabel = movie?.media_type === 'tv' ? 'Series' : 'Film';
     const href = movie ? `/${mediaType}/${movie.id}` : '/movies';
 
     return (

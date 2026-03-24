@@ -133,6 +133,89 @@ export async function syncUser(userData: Partial<User>): Promise<User> {
     return await response.json();
 }
 
+// --- User Lists Types ---
+
+export interface UserListItem {
+    id: number;
+    list_id: number;
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path: string | null;
+    added_at: string;
+}
+
+export interface UserListSummary {
+    id: number;
+    user_id: string;
+    name: string;
+    created_at: string;
+    item_count: number;
+}
+
+export interface UserListFull extends UserListSummary {
+    items: UserListItem[];
+}
+
+export interface ItemCheckResponse {
+    tmdb_id: number;
+    list_ids: number[];
+}
+
+// --- User Lists API ---
+
+export async function getUserLists(clerkId: string): Promise<UserListSummary[]> {
+    return fetchFromBackend(`/lists/${clerkId}`);
+}
+
+export async function createUserList(clerkId: string, name: string): Promise<UserListSummary> {
+    const url = `${API_BASE_URL}/lists/${clerkId}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+    });
+    if (!response.ok) throw new Error(`Failed to create list: ${response.statusText}`);
+    return response.json();
+}
+
+export async function deleteUserList(listId: number): Promise<void> {
+    const url = `${API_BASE_URL}/lists/list/${listId}`;
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) throw new Error(`Failed to delete list: ${response.statusText}`);
+}
+
+export async function getListWithItems(listId: number): Promise<UserListFull> {
+    return fetchFromBackend(`/lists/list/${listId}/items`);
+}
+
+export async function addItemToList(listId: number, item: {
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path?: string | null;
+}): Promise<UserListItem> {
+    const url = `${API_BASE_URL}/lists/list/${listId}/items`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+    });
+    if (!response.ok) throw new Error(`Failed to add item: ${response.statusText}`);
+    return response.json();
+}
+
+export async function removeItemFromList(listId: number, tmdbId: number): Promise<void> {
+    const url = `${API_BASE_URL}/lists/list/${listId}/items/${tmdbId}`;
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) throw new Error(`Failed to remove item: ${response.statusText}`);
+}
+
+export async function checkItemInLists(clerkId: string, tmdbId: number): Promise<ItemCheckResponse> {
+    return fetchFromBackend(`/lists/${clerkId}/check/${tmdbId}`);
+}
+
+
 // --- TMDB API Calls (via proxy) ---
 
 export async function getTrending(mediaType: 'all' | 'movie' | 'tv' | 'person' = 'all', timeWindow: 'day' | 'week' = 'day'): Promise<TMDBResponse<any>> {
@@ -159,6 +242,10 @@ export async function getTVSeasonDetails(tvId: number, seasonNumber: number): Pr
     return fetchFromBackend(`/tmdb/tv/${tvId}/season/${seasonNumber}`);
 }
 
+export async function getEpisodeDetails(tvId: number, seasonNumber: number, episodeNumber: number): Promise<any> {
+    return fetchFromBackend(`/tmdb/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}`);
+}
+
 export async function getPersonDetails(id: number): Promise<any> {
     return fetchFromBackend(`/tmdb/person/${id}`);
 }
@@ -168,7 +255,16 @@ export async function searchMulti(query: string, page: number = 1): Promise<TMDB
 }
 
 // Helper to get full image URLs from TMDB paths
-export function getImageUrl(path: string | null, size: 'w500' | 'original' = 'w500'): string {
+export function getImageUrl(path: string | null, size: 'w500' | 'w185' | 'original' = 'w500'): string {
     if (!path) return '/placeholder-poster.png'; // Make sure you have a fallback image in your public folder
     return `https://image.tmdb.org/t/p/${size}${path}`;
+}
+// Helper to create SEO-friendly slugs for URLs
+export function createSlug(id: number | string, name: string): string {
+    if (!name) return String(id);
+    const slug = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+    return `${id}-${slug}`;
 }

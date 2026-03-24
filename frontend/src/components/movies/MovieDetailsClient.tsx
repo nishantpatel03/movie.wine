@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Star, PlayCircle, Plus } from 'lucide-react';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
-
+import { AddToListButton } from '@/components/shared/AddToListButton';
 import { getImageUrl } from '@/lib/api';
 
 // Shared Animation Variants
@@ -139,17 +139,15 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                     </motion.div>
 
                     {/* Action Buttons */}
-                    <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-4 pt-6">
+                    <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-6 pt-10">
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
 
-                        <motion.button 
-                            whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.15)" }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 px-8 py-3 lg:px-10 lg:py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl font-bold transition-all shadow-lg uppercase tracking-widest text-sm"
-                        >
-                            <Plus className="w-5 h-5" />
-                            My List
-                        </motion.button>
+                        <AddToListButton
+                            tmdbId={movie.id}
+                            mediaType="movie"
+                            title={movie.title}
+                            posterPath={movie.poster_path}
+                        />
                     </motion.div>
                 </motion.div>
             </section>
@@ -166,8 +164,8 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                     className="lg:col-span-2 space-y-16"
                 >
                     {/* Overview */}
-                    <motion.div variants={fadeInUp} className="bg-white/5 backdrop-blur-xl border border-white/5 p-8 rounded-3xl">
-                        <h2 className="text-2xl font-bold tracking-tight text-white mb-6 uppercase tracking-widest text-sm text-primary">
+                    <motion.div variants={fadeInUp} className="bg-white/5 backdrop-blur-xl border border-white/5 p-10 rounded-[40px] shadow-2xl">
+                        <h2 className="text-2xl font-bold tracking-tight text-white mb-8 uppercase tracking-[0.2em] text-[12px] text-primary/80">
                             The Story
                         </h2>
                         <p className="text-lg text-slate-300 leading-relaxed font-normal">

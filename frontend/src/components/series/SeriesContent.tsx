@@ -28,7 +28,7 @@ const GENRE_MAP: Record<number, string> = {
     10768: 'War & Politics', 37: 'Western'
 };
 
-export function TvShowsContent({ initialShows }: { initialShows: TVShow[] }) {
+export function SeriesContent({ initialShows }: { initialShows: TVShow[] }) {
     const [activeFilter, setActiveFilter] = useState('All');
 
     // UI filters we want to show
@@ -63,7 +63,7 @@ export function TvShowsContent({ initialShows }: { initialShows: TVShow[] }) {
                 ))}
             </div>
 
-            {/* TV Shows Grid */}
+            {/* Series Grid */}
             <motion.div
                 variants={staggerContainer}
                 initial="hidden"
@@ -115,7 +115,7 @@ export function TvShowsContent({ initialShows }: { initialShows: TVShow[] }) {
                             <div className="flex-1 flex flex-col px-1">
                                 <div className="flex items-center justify-between mb-1.5">
                                     <span className="text-[10px] font-bold text-accent-purple/90 tracking-widest uppercase truncate max-w-[65%]">
-                                        {show.genre_ids[0] ? GENRE_MAP[show.genre_ids[0]] : 'TV Show'}
+                                        {show.genre_ids[0] ? GENRE_MAP[show.genre_ids[0]] : 'Series'}
                                     </span>
                                     <span className="text-xs text-slate-500 font-medium">
                                         {show.first_air_date ? show.first_air_date.substring(0, 4) : '—'}

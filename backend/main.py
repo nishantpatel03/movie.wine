@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import engine, Base, get_db
 import models
-from routers import tmdb, community
+from routers import tmdb, community, lists
 
 # Create the database tables
 Base.metadata.create_all(bind=engine)
@@ -15,6 +15,7 @@ app = FastAPI(title="MovieWine Backend API")
 # Include the routers
 app.include_router(tmdb.router)
 app.include_router(community.router)
+app.include_router(lists.router)
 
 # Setup CORS to allow Next.js frontend to communicate
 app.add_middleware(

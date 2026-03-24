@@ -31,32 +31,28 @@ export default async function HomePage() {
 
 
   return (
-    <div style={{
-      position: 'relative',
-      display: 'flex',
-      minHeight: '100svh',
-      width: '100%',
-      flexDirection: 'column',
-      overflowX: 'hidden',
-      background: '#0a0904',
-      color: '#f1f5f9',
-      fontFamily: "'Space Grotesk', sans-serif",
-    }}>
+    <div className="relative min-h-screen w-full flex flex-col bg-background-dark text-slate-100 font-display overflow-x-hidden">
       {/* Header — unchanged */}
       <HomeNavBar />
-
-      <main style={{ flex: 1 }}>
-        {/* Hero slideshow */}
+      
+      <main className="flex-1 flex flex-col">
+        {/* Hero section handles its own internal padding/centering */}
         <HomeHeroSection slides={heroSlides} />
 
-        {/* Top 10 Slider — Movies + Series */}
-        <TopTenSlider topMovies={trendingMovies} topSeries={trendingSeries} />
+        {/* Regular sections use consistent padding and max-width */}
+        <div className="flex flex-col gap-16 md:gap-24 lg:gap-32 pb-32">
+          <section className="max-content-width px-6 lg:px-12">
+            <TopTenSlider topMovies={trendingMovies} topSeries={trendingSeries} />
+          </section>
 
-        {/* Top Picks Bento */}
-        <TopPicksBento topPicks={topPicks} />
+          <section className="max-content-width px-6 lg:px-12">
+            <TopPicksBento topPicks={topPicks} />
+          </section>
 
-        {/* Why MovieWine */}
-        <WhySection />
+          <section className="max-content-width px-6 lg:px-12">
+            <WhySection />
+          </section>
+        </div>
       </main>
 
       {/* ── Footer ── */}
@@ -97,7 +93,7 @@ export default async function HomePage() {
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
                   { label: 'Browse Movies', href: '/movies' },
-                  { label: 'TV Series', href: '/tv-shows' },
+                  { label: 'Series', href: '/series' },
                   { label: 'Community', href: '/community' },
                 ].map(link => (
                   <li key={link.href}>

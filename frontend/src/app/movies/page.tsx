@@ -59,7 +59,7 @@ export default async function MoviesPage() {
                         <h4 className="text-white font-bold mb-6">Explore</h4>
                         <ul className="space-y-4 text-slate-500 text-sm">
                             <li><Link href="/movies" className="hover:text-primary transition-colors">Movies</Link></li>
-                            <li><Link href="/tv-shows" className="hover:text-primary transition-colors">TV Shows</Link></li>
+                            <li><Link href="/series" className="hover:text-primary transition-colors">Series</Link></li>
                         </ul>
                     </div>
                 </div>
