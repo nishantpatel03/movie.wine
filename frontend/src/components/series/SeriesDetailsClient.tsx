@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, Star, PlayCircle, Plus, Check } from 'lucide-react';
+import { ArrowLeft, Star, PlayCircle, Plus } from 'lucide-react';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import { SeasonList } from './SeasonList';
@@ -11,7 +10,9 @@ import { AddToListButton } from '@/components/shared/AddToListButton';
 import { WatchlistButton } from '@/components/shared/WatchlistButton';
 import { WatchedButton } from '@/components/shared/WatchedButton';
 import { CommentSection } from '@/components/shared/CommentSection';
-import { getImageUrl } from '@/lib/api';
+import { StreamingPlayerModal } from '@/components/shared/StreamingPlayerModal';
+import { getImageUrl, getStreamingLinks, StreamingLink } from '@/lib/api';
+import { useState, useEffect } from 'react';
 
 // Shared Animation Variants
 const staggerContainer: Variants = {
@@ -36,6 +37,14 @@ interface SeriesDetailsClientProps {
 
 export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: SeriesDetailsClientProps) {
     const [activeTab, setActiveTab] = useState('episodes');
+    const [streamingLinks, setStreamingLinks] = useState<StreamingLink[]>([]);
+    const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (show?.id) {
+            getStreamingLinks(show.id, 'tv').then(setStreamingLinks).catch(console.error);
+        }
+    }, [show?.id]);
 
     if (!show) return null;
 
@@ -127,6 +136,18 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
 
                     {/* Action buttons */}
                     <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-3 mt-4">
+                        {streamingLinks.length > 0 && (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setIsPlayerModalOpen(true)}
+                                className="flex items-center gap-2 px-8 py-3 lg:px-10 lg:py-4 rounded-xl font-bold transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_0_20px_rgba(255,179,71,0.3)]"
+                            >
+                                <PlayCircle className="w-5 h-5 fill-current" />
+                                WATCH NOW
+                            </motion.button>
+                        )}
+
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
 
                         <WatchedButton
@@ -159,7 +180,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
             {/* MAIN CONTENT */}
             <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 lg:gap-16 pt-8 pb-20">
                 {/* LEFT COLUMN */}
-                <div>
+                <div className="space-y-12">
                     {/* Tabs */}
                     <div className="flex flex-wrap items-center gap-3 mb-10 pb-2">
                         {['episodes', 'reviews', 'cast', 'story'].map(tab => (
@@ -331,6 +352,13 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                     </div>
                 </div>
             </div>
+
+            <StreamingPlayerModal 
+                isOpen={isPlayerModalOpen}
+                onClose={() => setIsPlayerModalOpen(false)}
+                links={streamingLinks}
+                title={show.name}
+            />
         </div>
     );
 }

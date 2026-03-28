@@ -15,6 +15,7 @@ export default function SyncUser() {
                         clerk_id: user.id,
                         username: user.username || user.firstName || 'Anonymous',
                         avatar_url: user.imageUrl,
+                        role: (user.publicMetadata?.role as string) || 'user',
                     });
                 } catch (error) {
                     console.error("Failed to sync user with backend:", error);

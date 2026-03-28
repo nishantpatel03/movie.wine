@@ -5,6 +5,7 @@ import { HomeNavBar } from '@/components/home/HomeNavBar';
 import Link from 'next/link';
 import WhySection from '@/components/home/WhySection';
 import TopTenSlider from '@/components/home/TopTenSlider';
+import SpecialPicksSlider from '@/components/home/SpecialPicksSlider';
 
 export default async function HomePage() {
   // Fetch trending all (for hero + top picks), movies, and tv in parallel
@@ -35,6 +36,11 @@ export default async function HomePage() {
   // Use the first 8 trending items as hero slides
   const heroSlides = topPicks.slice(0, 8).filter((m: any) => m.backdrop_path);
 
+  // Mix recommended movies and series
+  const mixedRecommendations = [...recommendedMovies.slice(0, 10), ...recommendedSeries.slice(0, 10)]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 15);
+
 
   return (
     <div className="relative min-h-screen w-full flex flex-col bg-background-dark text-slate-100 font-display overflow-x-hidden">
@@ -51,12 +57,8 @@ export default async function HomePage() {
             <TopTenSlider topMovies={trendingMovies} topSeries={trendingSeries} />
           </section>
 
-          <section className="max-content-width px-6 lg:px-12">
-            <div className="mb-12">
-              <h2 className="text-3xl md:text-5xl font-serif italic text-white mb-4">Specially For You</h2>
-              <p className="text-slate-400 max-w-2xl">Curated masterpieces and hidden gems our curators love.</p>
-            </div>
-            <TopTenSlider topMovies={recommendedMovies} topSeries={recommendedSeries} />
+          <section className="max-content-width">
+            <SpecialPicksSlider items={mixedRecommendations} />
           </section>
 
           <section className="max-content-width px-6 lg:px-12">

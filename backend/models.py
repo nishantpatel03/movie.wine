@@ -178,3 +178,17 @@ class WatchedItem(Base):
 
     # Relationship to User
     user = relationship("User", back_populates="watched_items")
+
+
+class StreamingLink(Base):
+    __tablename__ = "streaming_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tmdb_id = Column(Integer, nullable=False, index=True)
+    media_type = Column(String, nullable=False)  # "movie" or "tv"
+    season_number = Column(Integer, nullable=True)
+    episode_number = Column(Integer, nullable=True)
+    url = Column(String, nullable=False)
+    provider_name = Column(String, default="Direct")
+    quality = Column(String, default="HD") # e.g., "4K", "1080p"
+    added_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -3,6 +3,7 @@ import { getTVSeasonDetails, getTVDetails, getImageUrl } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Play } from 'lucide-react';
+import { SeasonDetailsClient } from '@/components/series/SeasonDetailsClient';
 
 export default async function SeasonDetailsPage({ params }: { params: Promise<{ slug: string, season_number: string }> }) {
     const resolvedParams = await params;
@@ -90,59 +91,11 @@ export default async function SeasonDetailsPage({ params }: { params: Promise<{ 
                     </h2>
                 </div>
 
-                <div className="space-y-4">
-                    {seasonDetails.episodes?.map((episode: any) => (
-                        <Link 
-                            key={episode.id} 
-                            href={`/series/${resolvedParams.slug}/season/${seasonNumber}/episode/${episode.episode_number}`}
-                            className="flex flex-col md:flex-row gap-6 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors group block"
-                        >
-                            <div className="w-full md:w-72 aspect-video flex-shrink-0 relative rounded-lg overflow-hidden bg-black/50 border border-white/5">
-                                {episode.still_path ? (
-                                    <>
-                                        <Image
-                                            src={getImageUrl(episode.still_path, 'w500')}
-                                            alt={episode.name}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                            sizes="(max-width: 768px) 100vw, 288px"
-                                        />
-                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-                                    </>
-                                ) : (
-                                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-600">
-                                        <Play className="w-8 h-8 opacity-20 mb-2" />
-                                        <span className="text-xs">No Image</span>
-                                    </div>
-                                )}
-                                
-                                <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white shadow-lg">
-                                    {episode.runtime ? `${episode.runtime}m` : 'TBA'}
-                                </div>
-                            </div>
-                            
-                            <div className="flex-1 min-w-0 py-1 flex flex-col justify-center">
-                                <div className="flex items-start justify-between gap-4 mb-2">
-                                    <h4 className="text-white font-bold text-lg leading-tight group-hover:text-primary transition-colors">
-                                        <span className="text-white/40 mr-2">{episode.episode_number}.</span> 
-                                        {episode.name}
-                                    </h4>
-                                </div>
-                                <p className="text-[14px] text-white/50 leading-relaxed max-w-2xl mb-4 line-clamp-3">
-                                    {episode.overview || "No episode overview available."}
-                                </p>
-                                <div className="mt-auto flex items-center gap-6 text-[13px] font-medium text-slate-500">
-                                    {episode.air_date && <span>{new Date(episode.air_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>}
-                                    {episode.vote_average > 0 && (
-                                        <span className="flex items-center gap-1.5 text-primary/80">
-                                            <span className="material-symbols-outlined text-[14px]">star</span> {episode.vote_average.toFixed(1)}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
+                <SeasonDetailsClient 
+                    seasonDetails={seasonDetails} 
+                    show={show} 
+                    slug={resolvedParams.slug} 
+                />
             </div>
         </div>
     );

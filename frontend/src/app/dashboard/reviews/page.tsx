@@ -7,7 +7,7 @@ import { MessageSquare, Star, Edit2, Trash2, Video, Film } from 'lucide-react';
 import Link from 'next/link';
 import { Comment, getUserComments, updateComment, deleteComment, getImageUrl } from '@/lib/api';
 
-export default function MyReviewsPage() {
+export default function MyCommentsPage() {
     const { user, isLoaded, isSignedIn } = useUser();
     const [comments, setComments] = useState<Comment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -64,7 +64,7 @@ export default function MyReviewsPage() {
 
     const handleDelete = async (id: number) => {
         if (!user) return;
-        if (!confirm("Are you sure you want to delete this review?")) return;
+        if (!confirm("Are you sure you want to delete this comment?")) return;
         
         try {
             await deleteComment(user.id, id);
@@ -85,7 +85,7 @@ export default function MyReviewsPage() {
         return (
             <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh]">
                 <div className="w-12 h-12 border-4 border-white/10 border-t-primary rounded-full animate-spin mb-4" />
-                <p className="text-white/60 font-medium tracking-wide">Loading your reviews...</p>
+                <p className="text-white/60 font-medium tracking-wide">Loading your comments...</p>
             </div>
         );
     }
@@ -94,8 +94,8 @@ export default function MyReviewsPage() {
         return (
             <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
                 <MessageSquare className="w-16 h-16 text-white/20 mb-6" />
-                <h1 className="text-3xl font-bold text-white mb-2">My Reviews</h1>
-                <p className="text-white/60 max-w-sm">Please sign in to view and manage your reviews.</p>
+                <h1 className="text-3xl font-bold text-white mb-2">My Comments</h1>
+                <p className="text-white/60 max-w-sm">Please sign in to view and manage your comments.</p>
             </div>
         );
     }
@@ -107,14 +107,14 @@ export default function MyReviewsPage() {
                 <div>
                     <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                         <MessageSquare className="w-7 h-7 text-primary" />
-                        My Reviews
+                        My Comments
                     </h1>
                     <p className="text-white/60 text-sm">Manage your cinematic thoughts and opinions.</p>
                 </div>
                 <div className="px-5 py-2.5 bg-white/[0.03] border border-white/[0.08] rounded-2xl flex items-center gap-3 shadow-inner">
                     <Star className="w-4 h-4 text-primary" />
                     <span className="text-white/80 font-medium text-sm">
-                        {comments.length} <span className="text-white/40">Total Reviews</span>
+                        {comments.length} <span className="text-white/40">Total Comments</span>
                     </span>
                 </div>
             </div>
@@ -125,7 +125,7 @@ export default function MyReviewsPage() {
                     <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
                         <MessageSquare className="w-8 h-8 text-white/20" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-3">No reviews yet</h2>
+                    <h2 className="text-2xl font-bold text-white mb-3">No comments yet</h2>
                     <p className="text-white/50 max-w-md mx-auto mb-8">
                         You haven't shared your thoughts on any movies or TV series yet. When you do, they will appear here.
                     </p>

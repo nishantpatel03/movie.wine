@@ -9,7 +9,9 @@ import { AddToListButton } from '@/components/shared/AddToListButton';
 import { WatchlistButton } from '@/components/shared/WatchlistButton';
 import { WatchedButton } from '@/components/shared/WatchedButton';
 import { CommentSection } from '@/components/shared/CommentSection';
-import { getImageUrl } from '@/lib/api';
+import { StreamingPlayerModal } from '@/components/shared/StreamingPlayerModal';
+import { getImageUrl, getStreamingLinks, StreamingLink } from '@/lib/api';
+import { useState, useEffect } from 'react';
 
 // Shared Animation Variants
 const staggerContainer: Variants = {
@@ -43,6 +45,15 @@ interface MovieDetailsClientProps {
 }
 
 export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: MovieDetailsClientProps) {
+    const [streamingLinks, setStreamingLinks] = useState<StreamingLink[]>([]);
+    const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (movie?.id) {
+            getStreamingLinks(movie.id, 'movie').then(setStreamingLinks).catch(console.error);
+        }
+    }, [movie?.id]);
+
     if (!movie) return null;
 
     // Format money
@@ -143,6 +154,18 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
 
                     {/* Action Buttons */}
                     <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-6 pt-10">
+                        {streamingLinks.length > 0 && (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setIsPlayerModalOpen(true)}
+                                className="flex items-center gap-2 px-8 py-3 lg:px-10 lg:py-4 rounded-xl font-bold transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_0_20px_rgba(255,179,71,0.3)]"
+                            >
+                                <PlayCircle className="w-5 h-5 fill-current" />
+                                WATCH NOW
+                            </motion.button>
+                        )}
+
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
 
                         <WatchedButton
@@ -281,6 +304,13 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                 </motion.div>
 
             </section>
+
+            <StreamingPlayerModal 
+                isOpen={isPlayerModalOpen}
+                onClose={() => setIsPlayerModalOpen(false)}
+                links={streamingLinks}
+                title={movie.title}
+            />
         </div>
     );
 }

@@ -461,3 +461,55 @@ export async function removeFromWatched(clerkId: string, tmdbId: number, mediaTy
     const response = await fetch(url, { method: 'DELETE' });
     if (!response.ok) throw new Error(`Failed to remove from watched: ${response.statusText}`);
 }
+
+// --- Streaming Links API ---
+
+export interface StreamingLink {
+    id: number;
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    season_number?: number;
+    episode_number?: number;
+    url: string;
+    provider_name: string;
+    quality: string;
+    added_at: string;
+}
+
+export async function getStreamingLinks(
+    tmdbId: number, 
+    mediaType: string, 
+    season?: number, 
+    episode?: number
+): Promise<StreamingLink[]> {
+    const params: any = { media_type: mediaType };
+    if (season !== undefined) params.season = season;
+    if (episode !== undefined) params.episode = episode;
+    
+    return fetchFromBackend(`/links/${tmdbId}`, params);
+}
+
+export async function addStreamingLink(clerkId: string, linkData: {
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    season_number?: number;
+    episode_number?: number;
+    url: string;
+    provider_name?: string;
+    quality?: string;
+}): Promise<StreamingLink> {
+    const url = `${API_BASE_URL}/links/${clerkId}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(linkData),
+    });
+    if (!response.ok) throw new Error(`Failed to add streaming link: ${response.statusText}`);
+    return response.json();
+}
+
+export async function deleteStreamingLink(clerkId: string, linkId: number): Promise<void> {
+    const url = `${API_BASE_URL}/links/${clerkId}/${linkId}`;
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) throw new Error(`Failed to delete streaming link: ${response.statusText}`);
+}
