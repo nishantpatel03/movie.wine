@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import engine, Base, get_db
 import models
-from routers import tmdb, community, lists, comments
+from routers import tmdb, community, lists, comments, watchlist, watched
 
 # Create the database tables
 Base.metadata.create_all(bind=engine)
@@ -17,6 +17,8 @@ app.include_router(tmdb.router)
 app.include_router(community.router)
 app.include_router(lists.router)
 app.include_router(comments.router)
+app.include_router(watchlist.router)
+app.include_router(watched.router)
 
 # Setup CORS to allow Next.js frontend to communicate
 app.add_middleware(

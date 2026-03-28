@@ -30,6 +30,22 @@ class User(Base):
     likes = relationship("DiscussionLike", back_populates="user")
     lists = relationship("UserList", back_populates="owner", cascade="all, delete")
     comments = relationship("Comment", back_populates="author", cascade="all, delete")
+    watchlist = relationship("WatchlistItem", back_populates="user", cascade="all, delete")
+    watched_items = relationship("WatchedItem", back_populates="user", cascade="all, delete")
+
+class WatchlistItem(Base):
+    __tablename__ = "watchlist_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.clerk_id"), nullable=False, index=True)
+    tmdb_id = Column(Integer, nullable=False, index=True)
+    media_type = Column(String, nullable=False)  # "movie" or "tv"
+    title = Column(String, nullable=False)
+    poster_path = Column(String, nullable=True)
+    added_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationship to User
+    user = relationship("User", back_populates="watchlist")
 
 class Comment(Base):
     __tablename__ = "comments"
@@ -146,3 +162,19 @@ class UserListItem(Base):
 
     # Relationships
     list = relationship("UserList", back_populates="items")
+
+
+class WatchedItem(Base):
+    __tablename__ = "watched_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.clerk_id"), nullable=False, index=True)
+    tmdb_id = Column(Integer, nullable=False, index=True)
+    media_type = Column(String, nullable=False)  # "movie" or "tv"
+    title = Column(String, nullable=False)
+    poster_path = Column(String, nullable=True)
+    runtime = Column(Integer, default=0) # in minutes
+    watched_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationship to User
+    user = relationship("User", back_populates="watched_items")

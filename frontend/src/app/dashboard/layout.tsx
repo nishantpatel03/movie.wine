@@ -16,7 +16,7 @@ export default function DashboardLayout({
     const navItems = [
         { href: '/dashboard', label: 'Overview', icon: 'dashboard' },
         { href: '/dashboard/watchlist', label: 'My Watchlist', icon: 'bookmark' },
-        { href: '/dashboard/reviews', label: 'My Reviews', icon: 'reviews' },
+        { href: '/dashboard/reviews', label: 'Comments', icon: 'reviews' },
         { href: '/dashboard/settings', label: 'Settings', icon: 'settings' },
     ];
 

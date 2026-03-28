@@ -1,133 +1,151 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
-import { useState } from 'react';
-
-// Animation Variants
-const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
-const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 }
-    }
-};
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { X, Play, Info, Bookmark } from 'lucide-react';
+import { WatchlistItem, getWatchlist, removeFromWatchlist, getImageUrl, createSlug } from '@/lib/api';
 
 export default function WatchlistPage() {
-    const [searchQuery, setSearchQuery] = useState('');
+    const { user, isLoaded } = useUser();
+    const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Placeholder Data
-    const savedMovies = Array.from({ length: 12 }).map((_, i) => ({
-        id: i + 1,
-        title: ["The Obsidian Chronicles", "Vintage Dreams", "Midnight Shadows", "Echoes of Time", "Silent Echo", "Neon Lights"][i % 6],
-        year: [2024, 2023, 2022, 2021][i % 4],
-        genre: ["Sci-Fi", "Drama", "Thriller", "Action"][i % 4],
-        src: [
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuD2okTzokXQRyCvk9QEgS2_g9rUVlH5oBC1Uu2qS17pyvFwoS_MGwXVGWrd1fOBmQ-9gUqSXrhGlGGL2qhJGExMJ1-wptu6YzOb0LOgZMmIq7C2QGg5gj003LWR1XDt0b9SB4wbZy1YWWFyurOvWVyqbg-jaX_qVGVm_b-jGAwId_x-tZb8MXwqrd52jXIly44LxO37_adtCDTbf7K4YUPhvtXe9PHmNAOOksLVL8q_ZgljVSGLo7ds0Ka0Hn-WxBVdm-1aZik7Zhg",
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuCER2Vmr68AgZU425c3K6MwCGCN0FsPT1yvi6WcapL2YTTgw3tsvx3Kw9Zmqzvs1Z79-2eXtOag0r2i1w5HGDosRMveY2ACjzZo4icjmpla7eA7nQ_VOtF02sWu0e7MNKJVBh2VdXNH0WiBvT2y0EuImcRrpT3uaXGkmpgi4uIJD-GxM9Ff1OL9wfC5eJssrkDvHMSL1J-QrcjiloWeYwmriYAQyvuuwxy2O9buZxCWVlQ-yzuTWvS-1Bd61HOeaZxTZm39NKkIRYs",
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuBoi9j6kPM6-Dzg5o-I1dLd2PBt5DFebdQvizwioyOEL2ZiQmmh9n48Zl5__eHaqi73K0rc9LDJW03bF34fKspB-oEcsw6P6ResL-69vH1sp_7xPyGfBBLg7iuX8SM5qct0Tk791wZ1Fi9p9VkzVSwk9bbufRUmXlJMq7btnGZWTcry4_xn5yUhCuItcPHp7bR-DZTCi9gNJ1vhxdOryYQedpV0uPyAsaBh-B5yVxk7tVD34dbkKKDScbj1FBydyTrAnqn9t_V2YmU",
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuBs5CQoJ2uOIkbTxx80_oR2rzMuMNe75MfWJ6GJKwRNImDkpGSUMdVo0jYXFg3W29y_bEfI7X9goR1rDVUlqkSHHWvCIJWKhDkPMsmOWSWxehqb_HLdv84oNP1IbUkxDDDoh_DJRl0EkfSqt9ygN6aovAF5YhdjmAsDjB5oqfSMPr0KuWif_OPvDCpHje6Cp6Jd9kvmzpj9n5_ntn7sXpF1d_negNFLXzPuS-CJgeBF1i89B7ptjp1UkUM7OT6VeuO_I0RBw-H5Yrg",
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuAMuSX4GcHJVUItgysbiyfC4N0G-8hzZQAj5AQZLnTAbULuS9gZdputUdpxiVPATrns1b4kVjVNCFDEcan47wGNSaJzt8qzrnmcsh2y-MvTJgZ_QtIGX4Lfa0wTcUJK6BKhVnlgr-17jxphEKzLEha-l8XxAVgKzZl-JCtUZIdMEHuZxF2kOGAIT2yg_3HlZnKTpB7kOa_8-zOmucZKRN1Wh3LaTCrgDMuid6m7gEUIbkXFNf6usU-zV1M2T0uO6FQ4AeEM4UNXYeY"
-        ][i % 5]
-    }));
+    useEffect(() => {
+        if (isLoaded && user) {
+            fetchWatchlist();
+        }
+    }, [isLoaded, user]);
 
-    const filteredMovies = searchQuery === ''
-        ? savedMovies
-        : savedMovies.filter(m => m.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    async function fetchWatchlist() {
+        try {
+            const data = await getWatchlist(user!.id);
+            setWatchlist(data);
+        } catch (error) {
+            console.error('Error fetching watchlist:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    async function handleRemove(tmdbId: number, mediaType: 'movie' | 'tv') {
+        if (!user) return;
+
+        // Optimistic update
+        setWatchlist(watchlist.filter(item => !(item.tmdb_id === tmdbId && item.media_type === mediaType)));
+
+        try {
+            await removeFromWatchlist(user.id, tmdbId, mediaType);
+        } catch (error) {
+            console.error('Error removing from watchlist:', error);
+            // Re-fetch on error to ensure sync
+            fetchWatchlist();
+            alert('Failed to remove item. Please try again.');
+        }
+    }
+
+    if (!isLoaded || isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     return (
-        <>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                >
-                    <h1 className="text-4xl font-serif italic text-white mb-2">My Watchlist</h1>
-                    <p className="text-slate-400">Your curated collection, ready to be watched.</p>
-                </motion.div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <div className="flex items-center gap-3 text-primary mb-2">
+                        <Bookmark className="w-6 h-6 fill-primary" />
+                        <span className="text-sm font-bold uppercase tracking-widest">Your Private Collection</span>
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-bold text-white font-serif italic">Watchlist</h1>
+                    <p className="text-slate-400 mt-2">Movies and series you've saved for later.</p>
+                </div>
+                
+                <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
+                    <span className="text-slate-400 text-sm font-medium">Total Items: </span>
+                    <span className="text-primary font-bold">{watchlist.length}</span>
+                </div>
+            </header>
 
-                {/* Search inside Watchlist */}
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-3 focus-within:ring-1 focus-within:ring-primary/50 focus-within:bg-white/10 transition-all w-full md:w-80"
-                >
-                    <Search className="text-white/50 w-5 h-5 shrink-0 mr-3" />
-                    <input
-                        className="bg-transparent text-sm focus:outline-none placeholder:text-slate-500 text-white w-full"
-                        placeholder="Search your list..."
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </motion.div>
-            </div>
+            {watchlist.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                    <AnimatePresence>
+                        {watchlist.map((item) => (
+                            <motion.div
+                                key={`${item.media_type}-${item.tmdb_id}`}
+                                layout
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.3 }}
+                                className="group relative aspect-[2/3] rounded-2xl overflow-hidden border border-white/5 bg-white/5"
+                            >
+                                <img 
+                                    src={getImageUrl(item.poster_path)} 
+                                    alt={item.title}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
 
-            {/* Movies Grid */}
-            {filteredMovies.length > 0 ? (
-                <motion.div
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate="visible"
-                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 gap-y-12"
-                >
-                    {filteredMovies.map((movie) => (
-                        <motion.div
-                            key={movie.id}
-                            variants={fadeInUp}
-                            className="relative group cursor-pointer flex flex-col h-full"
-                        >
-                            <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-4 border border-white/5 shadow-lg group-hover:shadow-[0_0_30px_rgba(244,192,37,0.15)] transition-all">
-                                <img src={movie.src} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                {/* Overlays */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                
+                                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
+                                    <h3 className="text-white font-bold text-sm line-clamp-2 mb-3">{item.title}</h3>
+                                    
+                                    <div className="flex gap-2">
+                                        <Link 
+                                            href={item.media_type === 'movie' ? `/movies/${item.tmdb_id}` : `/series/${createSlug(item.tmdb_id, item.title)}`}
+                                            className="flex-1 h-9 bg-primary text-background-dark rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold hover:bg-primary-light transition-colors"
+                                        >
+                                            <Info className="w-3.5 h-3.5" />
+                                            Details
+                                        </Link>
+                                    </div>
+                                </div>
 
-                                {/* Remove from list button */}
-                                <button className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/80 hover:scale-110 z-10 flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-[16px]">close</span>
+                                {/* Remove Button */}
+                                <button
+                                    onClick={() => handleRemove(item.tmdb_id, item.media_type)}
+                                    className="absolute top-2 right-2 size-8 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center text-white hover:bg-red-500 hover:border-red-400 transition-all opacity-0 group-hover:opacity-100"
+                                    title="Remove from watchlist"
+                                >
+                                    <X className="w-4 h-4" />
                                 </button>
 
-                                {/* Hover Play Button Overlay */}
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
-                                    <motion.div
-                                        initial={{ scale: 0.8, opacity: 0 }}
-                                        whileInView={{ scale: 1, opacity: 1 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="h-16 w-16 bg-primary/90 text-background-dark rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(244,192,37,0.5)] transform translate-y-4 group-hover:translate-y-0"
-                                    >
-                                        <span className="material-symbols-outlined text-3xl font-bold ml-1">play_arrow</span>
-                                    </motion.div>
+                                {/* Badge */}
+                                <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+                                    {item.media_type === 'movie' ? 'Movie' : 'TV'}
                                 </div>
-                            </div>
-
-                            <div className="flex-1 flex flex-col">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-bold text-primary tracking-wider uppercase">{movie.genre}</span>
-                                    <span className="text-xs text-slate-500 font-medium">{movie.year}</span>
-                                </div>
-                                <h3 className="text-white font-serif italic text-xl group-hover:text-primary transition-colors line-clamp-2">{movie.title}</h3>
-                            </div>
-                        </motion.div>
-                    ))}
-                </motion.div>
-            ) : (
-                <div className="py-20 text-center flex flex-col items-center justify-center border border-dashed border-white/10 rounded-2xl bg-white/5">
-                    <span className="material-symbols-outlined text-6xl text-white/20 mb-4">movie</span>
-                    <h3 className="text-xl font-bold text-white mb-2">No titles found</h3>
-                    <p className="text-slate-400">We couldn't find anything matching "{searchQuery}" in your list.</p>
-                    <button
-                        onClick={() => setSearchQuery('')}
-                        className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg transition-colors"
-                    >
-                        Clear Search
-                    </button>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
+            ) : (
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center py-24 glassmorphism border border-white/5 rounded-[40px] max-w-2xl mx-auto"
+                >
+                    <div className="size-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-8">
+                        <Bookmark className="w-10 h-10 text-slate-600" />
+                    </div>
+                    <h2 className="text-3xl font-serif italic text-white mb-4">Your Watchlist is Empty</h2>
+                    <p className="text-slate-400 mb-10 max-w-sm mx-auto leading-relaxed">
+                        Start exploring cinematic wines and bookmark your favorites to enjoy them later.
+                    </p>
+                    <Link 
+                        href="/movies"
+                        className="bg-primary hover:bg-primary-light text-background-dark font-bold px-10 py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(244,192,37,0.15)] inline-flex items-center gap-2"
+                    >
+                        <Play className="w-5 h-5 fill-background-dark" />
+                        Explore Movies
+                    </Link>
+                </motion.div>
             )}
-        </>
+        </div>
     );
 }

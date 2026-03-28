@@ -1,4 +1,4 @@
-import { getTrending } from '@/lib/api';
+import { getTrending, fetchFromBackend, TMDBResponse } from '@/lib/api';
 import { HomeHeroSection } from '@/components/home/HomeHeroSection';
 import { TopPicksBento } from '@/components/home/TopPicksBento';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
@@ -11,16 +11,22 @@ export default async function HomePage() {
   let trendingAll: any[] = [];
   let trendingMovies: any[] = [];
   let trendingSeries: any[] = [];
+  let recommendedMovies: any[] = [];
+  let recommendedSeries: any[] = [];
 
   try {
-    const [allRes, moviesRes, seriesRes] = await Promise.all([
+    const [allRes, moviesRes, seriesRes, recMoviesRes, recSeriesRes] = await Promise.all([
       getTrending('all', 'day'),
       getTrending('movie', 'week'),
       getTrending('tv', 'week'),
+      fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 1000, page: 1 }),
+      fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/tv', { sort_by: 'vote_average.desc', 'vote_count.gte': 500, page: 1 }),
     ]);
     trendingAll = allRes.results;
     trendingMovies = moviesRes.results;
     trendingSeries = seriesRes.results;
+    recommendedMovies = recMoviesRes.results;
+    recommendedSeries = recSeriesRes.results;
   } catch (e) {
     console.error('Error fetching trending data:', e);
   }
@@ -43,6 +49,14 @@ export default async function HomePage() {
         <div className="flex flex-col gap-16 md:gap-24 lg:gap-32 pb-32">
           <section className="max-content-width px-6 lg:px-12">
             <TopTenSlider topMovies={trendingMovies} topSeries={trendingSeries} />
+          </section>
+
+          <section className="max-content-width px-6 lg:px-12">
+            <div className="mb-12">
+              <h2 className="text-3xl md:text-5xl font-serif italic text-white mb-4">Specially For You</h2>
+              <p className="text-slate-400 max-w-2xl">Curated masterpieces and hidden gems our curators love.</p>
+            </div>
+            <TopTenSlider topMovies={recommendedMovies} topSeries={recommendedSeries} />
           </section>
 
           <section className="max-content-width px-6 lg:px-12">

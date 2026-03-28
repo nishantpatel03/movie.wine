@@ -8,6 +8,8 @@ import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import { SeasonList } from './SeasonList';
 import { AddToListButton } from '@/components/shared/AddToListButton';
+import { WatchlistButton } from '@/components/shared/WatchlistButton';
+import { WatchedButton } from '@/components/shared/WatchedButton';
 import { CommentSection } from '@/components/shared/CommentSection';
 import { getImageUrl } from '@/lib/api';
 
@@ -126,12 +128,29 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                     {/* Action buttons */}
                     <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-3 mt-4">
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
+
+                        <WatchedButton
+                            tmdbId={show.id}
+                            mediaType="tv"
+                            title={show.name}
+                            posterPath={show.poster_path}
+                            runtime={(show.episode_run_time?.[0] || 0) * (show.number_of_episodes || 0)}
+                            isHero={true}
+                        />
                         
                         <AddToListButton
                             tmdbId={show.id}
                             mediaType="tv"
                             title={show.name}
                             posterPath={show.poster_path}
+                        />
+
+                        <WatchlistButton
+                            tmdbId={show.id}
+                            mediaType="tv"
+                            title={show.name}
+                            posterPath={show.poster_path}
+                            isHero={true}
                         />
                     </motion.div>
                 </motion.div>

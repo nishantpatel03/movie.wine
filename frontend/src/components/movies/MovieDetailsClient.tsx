@@ -6,6 +6,8 @@ import { ArrowLeft, Star, PlayCircle, Plus } from 'lucide-react';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import { AddToListButton } from '@/components/shared/AddToListButton';
+import { WatchlistButton } from '@/components/shared/WatchlistButton';
+import { WatchedButton } from '@/components/shared/WatchedButton';
 import { CommentSection } from '@/components/shared/CommentSection';
 import { getImageUrl } from '@/lib/api';
 
@@ -143,11 +145,28 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                     <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-6 pt-10">
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
 
+                        <WatchedButton
+                            tmdbId={movie.id}
+                            mediaType="movie"
+                            title={movie.title}
+                            posterPath={movie.poster_path}
+                            runtime={movie.runtime}
+                            isHero={true}
+                        />
+
                         <AddToListButton
                             tmdbId={movie.id}
                             mediaType="movie"
                             title={movie.title}
                             posterPath={movie.poster_path}
+                        />
+
+                        <WatchlistButton
+                            tmdbId={movie.id}
+                            mediaType="movie"
+                            title={movie.title}
+                            posterPath={movie.poster_path}
+                            isHero={true}
                         />
                     </motion.div>
                 </motion.div>

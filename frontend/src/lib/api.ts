@@ -106,7 +106,7 @@ export interface TVShow {
 /**
  * Fetch data from our FastAPI backend
  */
-async function fetchFromBackend<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
+export async function fetchFromBackend<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
     // Construct query string
     const searchParams = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
@@ -365,4 +365,99 @@ export function createSlug(id: number | string, name: string): string {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
     return `${id}-${slug}`;
+}
+
+// --- Watchlist Types ---
+
+export interface WatchlistItem {
+    id: number;
+    user_id: string;
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path: string | null;
+    added_at: string;
+}
+
+// --- Watchlist API ---
+
+export async function getWatchlist(clerkId: string): Promise<WatchlistItem[]> {
+    return fetchFromBackend(`/watchlist/${clerkId}`);
+}
+
+export async function addToWatchlist(clerkId: string, item: {
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path?: string | null;
+}): Promise<WatchlistItem> {
+    const url = `${API_BASE_URL}/watchlist/${clerkId}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+    });
+    if (!response.ok) throw new Error(`Failed to add to watchlist: ${response.statusText}`);
+    return response.json();
+}
+
+export async function removeFromWatchlist(clerkId: string, tmdbId: number, mediaType: 'movie' | 'tv'): Promise<void> {
+    const url = `${API_BASE_URL}/watchlist/${clerkId}/${tmdbId}?media_type=${mediaType}`;
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) throw new Error(`Failed to remove from watchlist: ${response.statusText}`);
+}
+
+// --- Watched API ---
+
+export interface WatchedItem {
+    id: number;
+    user_id: string;
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path: string | null;
+    runtime: number;
+    watched_at: string;
+}
+
+export interface WatchStats {
+    total_runtime_minutes: number;
+    total_runtime_hours: number;
+    watched_count: number;
+}
+
+export async function getWatchedItems(clerkId: string): Promise<WatchedItem[]> {
+    return fetchFromBackend(`/watched/${clerkId}`);
+}
+
+export async function getWatchStats(clerkId: string): Promise<WatchStats> {
+    return fetchFromBackend(`/watched/${clerkId}/stats`);
+}
+
+export async function checkWatched(clerkId: string, tmdbId: number, mediaType: string): Promise<boolean> {
+    const data = await fetchFromBackend<{ is_watched: boolean }>(`/watched/${clerkId}/check/${tmdbId}`, { media_type: mediaType });
+    return data.is_watched;
+}
+
+export async function addToWatched(clerkId: string, item: {
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path?: string | null;
+    runtime?: number;
+}): Promise<WatchedItem> {
+    const url = `${API_BASE_URL}/watched/${clerkId}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+    });
+    if (!response.ok) throw new Error(`Failed to add to watched: ${response.statusText}`);
+    return response.json();
+}
+
+export async function removeFromWatched(clerkId: string, tmdbId: number, mediaType: 'movie' | 'tv'): Promise<void> {
+    const url = `${API_BASE_URL}/watched/${clerkId}/${tmdbId}?media_type=${mediaType}`;
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) throw new Error(`Failed to remove from watched: ${response.statusText}`);
 }
