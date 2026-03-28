@@ -79,21 +79,23 @@ export function useUserLists({ tmdbId }: UseUserListsOptions = {}) {
     }, [clerkId]);
 
     const removeList = useCallback(async (listId: number) => {
+        if (!clerkId) return;
         try {
-            await deleteUserList(listId);
+            await deleteUserList(clerkId, listId);
             setLists(prev => prev.filter(l => l.id !== listId));
             setListIdsContainingItem(prev => prev.filter(id => id !== listId));
         } catch {
             setError('Failed to delete list');
         }
-    }, []);
+    }, [clerkId]);
 
     const addToList = useCallback(async (
         listId: number,
         item: { tmdb_id: number; media_type: 'movie' | 'tv'; title: string; poster_path?: string | null }
     ) => {
+        if (!clerkId) return;
         try {
-            await addItemToList(listId, item);
+            await addItemToList(clerkId, listId, item);
             setLists(prev => prev.map(l =>
                 l.id === listId ? { ...l, item_count: l.item_count + 1 } : l
             ));
@@ -103,11 +105,12 @@ export function useUserLists({ tmdbId }: UseUserListsOptions = {}) {
         } catch {
             setError('Failed to add item');
         }
-    }, []);
+    }, [clerkId]);
 
     const removeFromList = useCallback(async (listId: number, tmdbIdToRemove: number) => {
+        if (!clerkId) return;
         try {
-            await removeItemFromList(listId, tmdbIdToRemove);
+            await removeItemFromList(clerkId, listId, tmdbIdToRemove);
             setLists(prev => prev.map(l =>
                 l.id === listId ? { ...l, item_count: Math.max(0, l.item_count - 1) } : l
             ));
@@ -115,7 +118,7 @@ export function useUserLists({ tmdbId }: UseUserListsOptions = {}) {
         } catch {
             setError('Failed to remove item');
         }
-    }, []);
+    }, [clerkId]);
 
     const isInAnyList = listIdsContainingItem.length > 0;
 

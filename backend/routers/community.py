@@ -17,6 +17,32 @@ class UserBase(BaseModel):
     role: str = "user"
     title: Optional[str] = None
     specialty: Optional[str] = None
+    bio: Optional[str] = None
+    favourite_genres: Optional[str] = None
+    default_feed: str = "all"
+    content_language: str = "en"
+    show_mature: bool = False
+    notif_digest: bool = True
+    notif_watchparty: bool = True
+    notif_discussion: bool = True
+
+    class Config:
+        from_attributes = True
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    bio: Optional[str] = None
+    favourite_genres: Optional[str] = None
+    default_feed: Optional[str] = None
+    content_language: Optional[str] = None
+    show_mature: Optional[bool] = None
+    notif_digest: Optional[bool] = None
+    notif_watchparty: Optional[bool] = None
+    notif_discussion: Optional[bool] = None
+
+class UserExport(BaseModel):
+    profile: UserBase
+    lists: List[dict] # Simplified for export
 
     class Config:
         from_attributes = True
@@ -100,3 +126,52 @@ def sync_user(user_data: UserBase, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+@router.get("/users/{clerk_id}", response_model=UserBase)
+def get_user(clerk_id: str, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.clerk_id == clerk_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+@router.patch("/users/{clerk_id}", response_model=UserBase)
+def update_user(clerk_id: str, user_update: UserUpdate, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.clerk_id == clerk_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = user_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_user, key, value)
+    
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@router.get("/users/{clerk_id}/export")
+def export_user_data(clerk_id: str, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.clerk_id == clerk_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Fetch lists and items
+    user_lists = []
+    for l in db_user.lists:
+        list_data = {
+            "name": l.name,
+            "created_at": l.created_at,
+            "items": [
+                {
+                    "tmdb_id": item.tmdb_id,
+                    "media_type": item.media_type,
+                    "title": item.title,
+                    "added_at": item.added_at
+                } for item in l.items
+            ]
+        }
+        user_lists.append(list_data)
+
+    return {
+        "profile": UserBase.from_orm(db_user),
+        "lists": user_lists
+    }

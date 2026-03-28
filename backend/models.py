@@ -12,6 +12,14 @@ class User(Base):
     role = Column(String, default="user") # e.g., 'user', 'columnist', 'admin'
     title = Column(String, nullable=True) # e.g., 'Chief Editor'
     specialty = Column(String, nullable=True) # e.g., 'Art House Cinema'
+    bio = Column(Text, nullable=True)
+    favourite_genres = Column(String, nullable=True)  # comma-separated e.g. "Action,Drama"
+    default_feed = Column(String, default="all")   # "all" | "movie" | "tv"
+    content_language = Column(String, default="en")
+    show_mature = Column(Boolean, default=False)
+    notif_digest = Column(Boolean, default=True)
+    notif_watchparty = Column(Boolean, default=True)
+    notif_discussion = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships

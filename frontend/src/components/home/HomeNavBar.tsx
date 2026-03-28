@@ -29,8 +29,8 @@ export function HomeNavBar() {
             transition={{ duration: 1, ease: "easeOut" }}
             className={`sticky top-0 z-[100] w-full transition-all duration-500 bg-background-dark border-b border-white/5 shadow-2xl ${isScrolled ? "py-3" : "py-5"}`}
         >
-            <div className="w-full px-6 lg:px-12 flex items-center justify-between">
-                <div className="flex items-center gap-12 lg:gap-20">
+            <div className="w-full px-6 lg:px-12 flex items-center justify-between gap-8">
+                <div className="flex items-center gap-12 lg:gap-20 shrink-0">
                     <Link href="/" className="flex items-center gap-2 group">
                         <div className="relative">
                             <span className="material-symbols-outlined text-primary text-4xl fill-1 group-hover:scale-110 transition-transform duration-500">movie_filter</span>
@@ -52,28 +52,44 @@ export function HomeNavBar() {
                                 <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all group-hover:w-full"></span>
                             </Link>
                         ))}
-                        <SignedIn>
-                            <Link
-                                href="/my-list"
-                                className="text-white/40 hover:text-white text-[11px] font-black tracking-[0.2em] uppercase transition-all relative group"
-                            >
-                                My List
-                                <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-primary transition-all group-hover:w-full"></span>
-                            </Link>
-                        </SignedIn>
                     </nav>
                 </div>
 
-                <div className="flex items-center gap-8">
-                    <div className="hidden md:block w-64 lg:w-80">
+                <div className="flex items-center gap-8 flex-1 justify-end">
+                    <div className="hidden md:block w-full max-w-2xl mr-auto">
                         <LiveSearch />
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-6 shrink-0">
+                        {/* Notification Bell */}
                         <button className="relative text-white/40 hover:text-white transition-colors group">
                             <span className="material-symbols-outlined text-2xl">notifications</span>
                             <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
                         </button>
+
+                        {/* My List icon — only when signed in */}
+                        <SignedIn>
+                            <Link
+                                href="/my-list"
+                                title="My List"
+                                className="relative text-white/40 hover:text-primary transition-colors group"
+                            >
+                                <span className="material-symbols-outlined text-2xl">bookmark</span>
+                                <div className="absolute inset-0 bg-primary/10 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                            </Link>
+                        </SignedIn>
+
+                        {/* My Dashboard icon — only when signed in */}
+                        <SignedIn>
+                            <Link
+                                href="/dashboard"
+                                title="My Dashboard"
+                                className="relative text-white/40 hover:text-primary transition-colors group"
+                            >
+                                <span className="material-symbols-outlined text-2xl">dashboard</span>
+                                <div className="absolute inset-0 bg-primary/10 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                            </Link>
+                        </SignedIn>
 
                         <SignedOut>
                             <div className="flex items-center gap-4">

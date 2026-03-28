@@ -69,9 +69,15 @@ def _get_or_create_user_stub(clerk_id: str, db: Session) -> models.User:
     """Ensure there is a User row for this clerk_id (stub with minimal data)."""
     user = db.query(models.User).filter(models.User.clerk_id == clerk_id).first()
     if not user:
+        # Use a unique username that won't collide — full clerk_id suffix
+        base_username = f"user_{clerk_id.replace('_', '').replace('|', '')[:16]}"
+        # Check if username already taken and make it unique
+        existing = db.query(models.User).filter(models.User.username == base_username).first()
+        if existing:
+            base_username = f"user_{clerk_id[-12:]}"
         user = models.User(
             clerk_id=clerk_id,
-            username=f"user_{clerk_id[:8]}",
+            username=base_username,
         )
         db.add(user)
         db.commit()
@@ -79,11 +85,30 @@ def _get_or_create_user_stub(clerk_id: str, db: Session) -> models.User:
     return user
 
 
+def _get_list_and_verify_owner(list_id: int, clerk_id: str, db: Session) -> models.UserList:
+    """
+    Fetch a UserList by ID and verify it belongs to the given clerk_id.
+    Raises 404 if not found, 403 if wrong owner.
+    This prevents any data mismatch or cross-user access.
+    """
+    lst = db.query(models.UserList).filter(models.UserList.id == list_id).first()
+    if not lst:
+        raise HTTPException(status_code=404, detail="List not found")
+    if lst.user_id != clerk_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied: this list does not belong to you"
+        )
+    return lst
+
+
 # ─── Endpoints ─────────────────────────────────────────────────────────────────
 
 @router.get("/{clerk_id}", response_model=List[UserListSummary])
 def get_user_lists(clerk_id: str, db: Session = Depends(get_db)):
-    """Get all lists for a user (without items for performance)."""
+    """Get all lists for a user (without items for performance).
+    Only returns lists that belong to this specific clerk_id — no data mismatch possible.
+    """
     lists = db.query(models.UserList).filter(models.UserList.user_id == clerk_id).all()
     result = []
     for lst in lists:
@@ -100,7 +125,7 @@ def get_user_lists(clerk_id: str, db: Session = Depends(get_db)):
 
 @router.post("/{clerk_id}", response_model=UserListSummary, status_code=status.HTTP_201_CREATED)
 def create_list(clerk_id: str, body: UserListCreate, db: Session = Depends(get_db)):
-    """Create a new named list for a user."""
+    """Create a new named list for a user. The list is strictly scoped to this clerk_id."""
     _get_or_create_user_stub(clerk_id, db)
     new_list = models.UserList(user_id=clerk_id, name=body.name)
     db.add(new_list)
@@ -115,35 +140,29 @@ def create_list(clerk_id: str, body: UserListCreate, db: Session = Depends(get_d
     )
 
 
-@router.delete("/list/{list_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_list(list_id: int, db: Session = Depends(get_db)):
-    """Delete a list and all its items."""
-    lst = db.query(models.UserList).filter(models.UserList.id == list_id).first()
-    if not lst:
-        raise HTTPException(status_code=404, detail="List not found")
+@router.delete("/{clerk_id}/list/{list_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_list(clerk_id: str, list_id: int, db: Session = Depends(get_db)):
+    """Delete a list — only if it belongs to the requesting clerk_id."""
+    lst = _get_list_and_verify_owner(list_id, clerk_id, db)
     db.delete(lst)
     db.commit()
 
 
-@router.get("/list/{list_id}/items", response_model=UserListResponse)
-def get_list_items(list_id: int, db: Session = Depends(get_db)):
-    """Get a list with all its items."""
-    lst = db.query(models.UserList).filter(models.UserList.id == list_id).first()
-    if not lst:
-        raise HTTPException(status_code=404, detail="List not found")
+@router.get("/{clerk_id}/list/{list_id}/items", response_model=UserListResponse)
+def get_list_items(clerk_id: str, list_id: int, db: Session = Depends(get_db)):
+    """Get a list with all its items — only if it belongs to the requesting clerk_id."""
+    lst = _get_list_and_verify_owner(list_id, clerk_id, db)
     return lst
 
 
-@router.post("/list/{list_id}/items", response_model=ListItemResponse, status_code=status.HTTP_201_CREATED)
-def add_item_to_list(list_id: int, body: ListItemCreate, db: Session = Depends(get_db)):
-    """Add a movie or series to a list. Ignores duplicates."""
-    lst = db.query(models.UserList).filter(models.UserList.id == list_id).first()
-    if not lst:
-        raise HTTPException(status_code=404, detail="List not found")
+@router.post("/{clerk_id}/list/{list_id}/items", response_model=ListItemResponse, status_code=status.HTTP_201_CREATED)
+def add_item_to_list(clerk_id: str, list_id: int, body: ListItemCreate, db: Session = Depends(get_db)):
+    """Add a movie or series to a list. Verifies clerk_id ownership. Ignores duplicates."""
+    lst = _get_list_and_verify_owner(list_id, clerk_id, db)
 
     # Check for duplicate
     existing = db.query(models.UserListItem).filter(
-        models.UserListItem.list_id == list_id,
+        models.UserListItem.list_id == lst.id,
         models.UserListItem.tmdb_id == body.tmdb_id,
     ).first()
     if existing:
@@ -162,11 +181,13 @@ def add_item_to_list(list_id: int, body: ListItemCreate, db: Session = Depends(g
     return item
 
 
-@router.delete("/list/{list_id}/items/{tmdb_id}", status_code=status.HTTP_204_NO_CONTENT)
-def remove_item_from_list(list_id: int, tmdb_id: int, db: Session = Depends(get_db)):
-    """Remove a specific item from a list."""
+@router.delete("/{clerk_id}/list/{list_id}/items/{tmdb_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_item_from_list(clerk_id: str, list_id: int, tmdb_id: int, db: Session = Depends(get_db)):
+    """Remove a specific item — only if the list belongs to the requesting clerk_id."""
+    lst = _get_list_and_verify_owner(list_id, clerk_id, db)
+
     item = db.query(models.UserListItem).filter(
-        models.UserListItem.list_id == list_id,
+        models.UserListItem.list_id == lst.id,
         models.UserListItem.tmdb_id == tmdb_id,
     ).first()
     if not item:
@@ -177,7 +198,9 @@ def remove_item_from_list(list_id: int, tmdb_id: int, db: Session = Depends(get_
 
 @router.get("/{clerk_id}/check/{tmdb_id}", response_model=ItemCheckResponse)
 def check_item_in_lists(clerk_id: str, tmdb_id: int, db: Session = Depends(get_db)):
-    """Return which of the user's lists already contain this media item."""
+    """Return which of THIS user's lists already contain this media item.
+    Strictly filtered by clerk_id — no cross-user data possible.
+    """
     user_lists = db.query(models.UserList).filter(models.UserList.user_id == clerk_id).all()
     list_ids_with_item = []
     for lst in user_lists:

@@ -3,14 +3,31 @@
 import { motion } from 'framer-motion';
 import { SignedIn, SignedOut, UserButton, RedirectToSignIn } from '@clerk/nextjs';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { HomeNavBar } from '@/components/home/HomeNavBar';
 
 export default function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const pathname = usePathname();
+
+    const navItems = [
+        { href: '/dashboard', label: 'Overview', icon: 'dashboard' },
+        { href: '/dashboard/watchlist', label: 'My Watchlist', icon: 'bookmark' },
+        { href: '/dashboard/reviews', label: 'My Reviews', icon: 'reviews' },
+        { href: '/dashboard/settings', label: 'Settings', icon: 'settings' },
+    ];
+
     return (
-        <div className="min-h-screen bg-background-dark text-slate-100 font-display flex flex-col md:flex-row">
+        <div className="min-h-screen bg-background-dark text-slate-100 font-display flex flex-col">
+
+            {/* Main Site Navbar — always visible at top for navigation back to site */}
+            <HomeNavBar />
+
+            {/* Dashboard body: sidebar + content */}
+            <div className="flex flex-col md:flex-row flex-1">
 
             {/* Fallback to SignIn if not authenticated */}
             <SignedOut>
@@ -34,23 +51,26 @@ export default function DashboardLayout({
                         </Link>
 
                         <nav className="space-y-2 flex gap-4 md:block overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide">
-                            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-colors shrink-0">
-                                <span className="material-symbols-outlined">dashboard</span>
-                                <span>Overview</span>
-                            </Link>
-                            <Link href="/dashboard/watchlist" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-colors shrink-0">
-                                <span className="material-symbols-outlined">bookmark</span>
-                                <span>My Watchlist</span>
-                            </Link>
-                            <Link href="/dashboard/reviews" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-colors shrink-0">
-                                <span className="material-symbols-outlined">reviews</span>
-                                <span>My Reviews</span>
-                            </Link>
-                            <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-colors shrink-0">
-                                <span className="material-symbols-outlined">settings</span>
-                                <span>Settings</span>
-                            </Link>
+                            {navItems.map((item) => {
+                                const isActive = pathname === item.href;
+                                return (
+                                    <Link 
+                                        key={item.href}
+                                        href={item.href} 
+                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all shrink-0 ${
+                                            isActive 
+                                            ? 'bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(244,192,37,0.1)]' 
+                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        <span className="material-symbols-outlined">{item.icon}</span>
+                                        <span>{item.label}</span>
+                                    </Link>
+                                );
+                            })}
                         </nav>
+
+
                     </div>
 
                     <div className="hidden md:flex items-center gap-4 mt-12 p-4 rounded-xl glassmorphism border border-white/5">
@@ -84,6 +104,7 @@ export default function DashboardLayout({
                 </main>
 
             </SignedIn>
+            </div>
         </div>
     );
 }

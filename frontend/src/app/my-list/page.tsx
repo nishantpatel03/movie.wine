@@ -118,12 +118,12 @@ export default function MyListPage() {
 
     // ── Load active list items ──────────────────────────────────────────────────
     useEffect(() => {
-        if (!activeListId) { setActiveList(null); return; }
+        if (!activeListId || !clerkId) { setActiveList(null); return; }
         setListLoading(true);
-        getListWithItems(activeListId)
+        getListWithItems(clerkId, activeListId)
             .then(setActiveList)
             .finally(() => setListLoading(false));
-    }, [activeListId]);
+    }, [activeListId, clerkId]);
 
     // ── Create list ─────────────────────────────────────────────────────────────
     const handleCreate = async () => {
@@ -143,7 +143,8 @@ export default function MyListPage() {
 
     // ── Delete list ─────────────────────────────────────────────────────────────
     const handleDeleteList = async (listId: number) => {
-        await deleteUserList(listId);
+        if (!clerkId) return;
+        await deleteUserList(clerkId, listId);
         setLists(prev => prev.filter(l => l.id !== listId));
         if (activeListId === listId) {
             const remaining = lists.filter(l => l.id !== listId);
@@ -153,8 +154,8 @@ export default function MyListPage() {
 
     // ── Remove item ─────────────────────────────────────────────────────────────
     const handleRemoveItem = async (tmdbId: number) => {
-        if (!activeListId) return;
-        await removeItemFromList(activeListId, tmdbId);
+        if (!activeListId || !clerkId) return;
+        await removeItemFromList(clerkId, activeListId, tmdbId);
         setActiveList(prev =>
             prev ? { ...prev, items: prev.items.filter(i => i.tmdb_id !== tmdbId) } : prev
         );

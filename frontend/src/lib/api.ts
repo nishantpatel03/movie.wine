@@ -8,6 +8,14 @@ export interface User {
     role: string;
     title: string | null;
     specialty: string | null;
+    bio?: string | null;
+    favourite_genres?: string | null;
+    default_feed?: string;
+    content_language?: string;
+    show_mature?: boolean;
+    notif_digest?: boolean;
+    notif_watchparty?: boolean;
+    notif_discussion?: boolean;
 }
 
 export interface Discussion {
@@ -133,6 +141,32 @@ export async function syncUser(userData: Partial<User>): Promise<User> {
     return await response.json();
 }
 
+export async function updateUser(clerkId: string, userData: Partial<User>): Promise<User> {
+    const url = `${API_BASE_URL}/community/users/${clerkId}`;
+    const response = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to update user: ${response.statusText}`);
+    }
+    return await response.json();
+}
+
+export async function getUserProfile(clerkId: string): Promise<User> {
+    return fetchFromBackend(`/community/users/${clerkId}`);
+}
+
+// Actually, let's add a proper GET /users/{id} to backend if not already there.
+// Wait, sync is POST. I should probably use a GET.
+// Looking at community.py, there is no GET /users/{id}. 
+// I'll add it to backend too.
+
+export async function exportUserData(clerkId: string): Promise<any> {
+    return fetchFromBackend(`/community/users/${clerkId}/export`);
+}
+
 // --- User Lists Types ---
 
 export interface UserListItem {
@@ -179,23 +213,23 @@ export async function createUserList(clerkId: string, name: string): Promise<Use
     return response.json();
 }
 
-export async function deleteUserList(listId: number): Promise<void> {
-    const url = `${API_BASE_URL}/lists/list/${listId}`;
+export async function deleteUserList(clerkId: string, listId: number): Promise<void> {
+    const url = `${API_BASE_URL}/lists/${clerkId}/list/${listId}`;
     const response = await fetch(url, { method: 'DELETE' });
     if (!response.ok) throw new Error(`Failed to delete list: ${response.statusText}`);
 }
 
-export async function getListWithItems(listId: number): Promise<UserListFull> {
-    return fetchFromBackend(`/lists/list/${listId}/items`);
+export async function getListWithItems(clerkId: string, listId: number): Promise<UserListFull> {
+    return fetchFromBackend(`/lists/${clerkId}/list/${listId}/items`);
 }
 
-export async function addItemToList(listId: number, item: {
+export async function addItemToList(clerkId: string, listId: number, item: {
     tmdb_id: number;
     media_type: 'movie' | 'tv';
     title: string;
     poster_path?: string | null;
 }): Promise<UserListItem> {
-    const url = `${API_BASE_URL}/lists/list/${listId}/items`;
+    const url = `${API_BASE_URL}/lists/${clerkId}/list/${listId}/items`;
     const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -205,8 +239,8 @@ export async function addItemToList(listId: number, item: {
     return response.json();
 }
 
-export async function removeItemFromList(listId: number, tmdbId: number): Promise<void> {
-    const url = `${API_BASE_URL}/lists/list/${listId}/items/${tmdbId}`;
+export async function removeItemFromList(clerkId: string, listId: number, tmdbId: number): Promise<void> {
+    const url = `${API_BASE_URL}/lists/${clerkId}/list/${listId}/items/${tmdbId}`;
     const response = await fetch(url, { method: 'DELETE' });
     if (!response.ok) throw new Error(`Failed to remove item: ${response.statusText}`);
 }
