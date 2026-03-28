@@ -6,6 +6,7 @@ import { ArrowLeft, Star, PlayCircle, Plus } from 'lucide-react';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import { AddToListButton } from '@/components/shared/AddToListButton';
+import { CommentSection } from '@/components/shared/CommentSection';
 import { getImageUrl } from '@/lib/api';
 
 // Shared Animation Variants
@@ -52,7 +53,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
             <HomeNavBar />
 
             {/* OTT Style Hero Backdrop Section */}
-            <section className="relative w-full h-[85vh] lg:h-screen overflow-hidden flex items-center pt-24 pb-12">
+            <section className="relative w-full min-h-[85vh] lg:min-h-[90vh] overflow-hidden flex items-center pt-32 pb-24">
                 {/* Background Image & Strong Overlays */}
                 <motion.div 
                     initial={{ opacity: 0, scale: 1.05 }}
@@ -153,7 +154,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
             </section>
 
             {/* Content Details Below the Hero */}
-            <section className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 mt-12 lg:-mt-10 grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
+            <section className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
                 
                 {/* Main Column */}
                 <motion.div 
@@ -204,6 +205,16 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                             </div>
                         </motion.div>
                     )}
+
+                    {/* Comments Section */}
+                    <motion.div variants={fadeInUp} className="pt-8">
+                        <CommentSection 
+                            tmdbId={movie.id}
+                            mediaType="movie"
+                            title={movie.title}
+                            posterPath={movie.poster_path}
+                        />
+                    </motion.div>
                 </motion.div>
 
                 {/* Sidebar Info */}

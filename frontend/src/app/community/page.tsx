@@ -90,7 +90,7 @@ export default function CommunityPage() {
                         <nav className="hidden lg:flex items-center gap-8">
                             {[
                                 { label: "HOME", href: "/" },
-                                { label: "FILMS", href: "/movies" },
+                                { label: "MOVIES", href: "/movies" },
                                 { label: "SERIES", href: "/series" },
                                 { label: "COMMUNITY", href: "/community", active: true },
                             ].map(item => (
@@ -441,7 +441,7 @@ export default function CommunityPage() {
                             <h4 className="text-[10px] font-bold tracking-[0.2em] text-white uppercase">Explore</h4>
                             <ul className="space-y-3 test-sm text-slate-400">
                                 <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
-                                <li><Link href="/movies" className="hover:text-primary transition-colors">Films</Link></li>
+                                <li><Link href="/movies" className="hover:text-primary transition-colors">Movies</Link></li>
                                 <li><Link href="/series" className="hover:text-primary transition-colors">Series</Link></li>
                             </ul>
                         </div>

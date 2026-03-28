@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
-import { searchMulti, getImageUrl } from '@/lib/api';
+import { searchMulti, getImageUrl, createSlug } from '@/lib/api';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -85,7 +85,7 @@ export function LiveSearch() {
                             {results.map((item) => (
                                 <Link
                                     key={item.id}
-                                    href={`/${item.media_type === 'tv' ? 'series' : 'movies'}/${item.id}`}
+                                    href={`/${item.media_type === 'tv' ? 'series' : 'movies'}/${createSlug(item.id, (item.title || item.name))}`}
                                     onClick={() => setIsOpen(false)}
                                     className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/10 group transition-colors"
                                 >

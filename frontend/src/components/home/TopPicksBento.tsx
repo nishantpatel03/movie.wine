@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { createSlug } from '@/lib/api';
 
 const stagger = {
     hidden: {},
@@ -17,9 +18,9 @@ function PosterCard({ movie, large = false }: { movie: any; large?: boolean }) {
     const imgSrc = large
         ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
         : `https://image.tmdb.org/t/p/w342${movie.poster_path || movie.backdrop_path}`;
-    const href = `/${movie.media_type === 'tv' ? 'series' : 'movies'}/${movie.id}`;
-    const rating = movie.vote_average?.toFixed(1);
     const title = movie.title || movie.name;
+    const href = `/${movie.media_type === 'tv' ? 'series' : 'movies'}/${createSlug(movie.id, title)}`;
+    const rating = movie.vote_average?.toFixed(1);
 
     return (
         <motion.div variants={item} className="group relative" style={{ borderRadius: 16, overflow: 'hidden', height: '100%' }}>

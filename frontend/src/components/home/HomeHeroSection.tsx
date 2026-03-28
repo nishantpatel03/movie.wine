@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { createSlug } from '@/lib/api';
 
 const SLIDE_INTERVAL = 4000; // ms between auto-advance
 
@@ -77,7 +78,7 @@ export function HomeHeroSection({ slides }: { slides: any[] }) {
     const rating = movie?.vote_average?.toFixed(1);
     const mediaType = movie?.media_type === 'tv' ? 'series' : 'movies';
     const mediaLabel = movie?.media_type === 'tv' ? 'Series' : 'Film';
-    const href = movie ? `/${mediaType}/${movie.id}` : '/movies';
+    const href = movie ? `/${mediaType}/${createSlug(movie.id, title)}` : '/movies';
 
     return (
         <section

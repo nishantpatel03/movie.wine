@@ -24,17 +24,17 @@ export default async function TvShowsPage() {
             <main className="flex-1">
 
                 {/* Page Hero */}
-                <section className="relative w-full pt-32 pb-24 px-6 lg:px-12 flex flex-col items-center justify-center border-b border-white/5 overflow-hidden text-center">
+                <section className="relative w-full pt-24 pb-12 px-6 lg:px-12 flex flex-col items-center justify-center border-b border-white/5 overflow-hidden text-center">
                     <div className="absolute inset-0 bg-background-dark z-0"></div>
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-accent-purple/20 blur-[120px] rounded-full pointer-events-none"></div>
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[200px] bg-accent-purple/20 blur-[80px] rounded-full pointer-events-none"></div>
 
                     <div className="relative z-10 max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-4">
                             <span className="w-2 h-2 rounded-full bg-accent-purple animate-pulse"></span>
                             <span className="text-xs font-medium tracking-wider text-slate-300 uppercase">Series Collection</span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif italic mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/50 tracking-tight">Series Library</h1>
-                        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif italic mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/50 tracking-tight">Series Library</h1>
+                        <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
                             Binge-worthy stories, unforgettable characters. Dive into the world's most compelling episodic content.
                         </p>
                     </div>

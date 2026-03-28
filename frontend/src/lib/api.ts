@@ -18,6 +18,24 @@ export interface User {
     notif_discussion?: boolean;
 }
 
+// --- Comments Types ---
+export interface Comment {
+    id: number;
+    user_id: string;
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path: string | null;
+    content: string;
+    created_at: string;
+    updated_at: string;
+    author: {
+        clerk_id: string;
+        username: string;
+        avatar_url: string | null;
+    };
+}
+
 export interface Discussion {
     id: number;
     author_id: string;
@@ -167,6 +185,50 @@ export async function exportUserData(clerkId: string): Promise<any> {
     return fetchFromBackend(`/community/users/${clerkId}/export`);
 }
 
+// --- Comments API ---
+
+export async function getMediaComments(tmdbId: number): Promise<Comment[]> {
+    return fetchFromBackend(`/comments/media/${tmdbId}`);
+}
+
+export async function getUserComments(clerkId: string): Promise<Comment[]> {
+    return fetchFromBackend(`/comments/user/${clerkId}`);
+}
+
+export async function createComment(clerkId: string, data: {
+    tmdb_id: number;
+    media_type: 'movie' | 'tv';
+    title: string;
+    poster_path: string | null;
+    content: string;
+}): Promise<Comment> {
+    const url = `${API_BASE_URL}/comments/${clerkId}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error(`Failed to create comment: ${response.statusText}`);
+    return response.json();
+}
+
+export async function updateComment(clerkId: string, commentId: number, content: string): Promise<Comment> {
+    const url = `${API_BASE_URL}/comments/${clerkId}/${commentId}`;
+    const response = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content }),
+    });
+    if (!response.ok) throw new Error(`Failed to update comment: ${response.statusText}`);
+    return response.json();
+}
+
+export async function deleteComment(clerkId: string, commentId: number): Promise<void> {
+    const url = `${API_BASE_URL}/comments/${clerkId}/${commentId}`;
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) throw new Error(`Failed to delete comment: ${response.statusText}`);
+}
+
 // --- User Lists Types ---
 
 export interface UserListItem {
@@ -287,6 +349,8 @@ export async function getPersonDetails(id: number): Promise<any> {
 export async function searchMulti(query: string, page: number = 1): Promise<TMDBResponse<any>> {
     return fetchFromBackend(`/tmdb/search/multi`, { query, page });
 }
+
+
 
 // Helper to get full image URLs from TMDB paths
 export function getImageUrl(path: string | null, size: 'w500' | 'w185' | 'original' = 'w500'): string {

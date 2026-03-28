@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Movie, getImageUrl } from '@/lib/api';
+import { Movie, getImageUrl, createSlug } from '@/lib/api';
 import Link from 'next/link';
 
 // Animation Variants
@@ -77,7 +77,7 @@ export function MoviesContent({ initialMovies }: { initialMovies: Movie[] }) {
                         variants={fadeInUp}
                         className="relative group cursor-pointer flex flex-col h-full"
                     >
-                        <Link href={`/movies/${movie.id}`} className="flex flex-col h-full w-full">
+                        <Link href={`/movies/${createSlug(movie.id, movie.title)}`} className="flex flex-col h-full w-full">
                             {/* Poster Image */}
                             <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-5 bg-slate-800/50 shadow-xl group-hover:shadow-[0_20px_40px_-15px_rgba(244,192,37,0.2)] transition-all duration-500 border border-white/5 group-hover:border-primary/30">
                                 <img

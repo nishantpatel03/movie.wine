@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { createSlug } from '@/lib/api';
 
 type MediaItem = {
     id: number;
@@ -36,8 +37,8 @@ function RankNumber({ rank }: { rank: number }) {
 }
 
 function MediaCard({ item, rank, mediaType }: { item: MediaItem; rank: number; mediaType: 'movie' | 'tv' }) {
-    const href = `/${mediaType === 'tv' ? 'series' : 'movies'}/${item.id}`;
     const title = item.title || item.name || '';
+    const href = `/${mediaType === 'tv' ? 'series' : 'movies'}/${createSlug(item.id, title)}`;
     const year = (item.release_date || item.first_air_date || '').substring(0, 4);
     const rating = item.vote_average?.toFixed(1);
     const imgSrc = item.poster_path

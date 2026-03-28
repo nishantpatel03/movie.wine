@@ -29,6 +29,23 @@ class User(Base):
     watch_party_attendances = relationship("WatchPartyAttendee", back_populates="user")
     likes = relationship("DiscussionLike", back_populates="user")
     lists = relationship("UserList", back_populates="owner", cascade="all, delete")
+    comments = relationship("Comment", back_populates="author", cascade="all, delete")
+
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.clerk_id"), nullable=False, index=True)
+    tmdb_id = Column(Integer, nullable=False, index=True)           # TMDB movie/series ID
+    media_type = Column(String, nullable=False)                      # "movie" or "tv"
+    title = Column(String, nullable=False)                           # Movie/series name
+    poster_path = Column(String, nullable=True)                      # Poster path
+    content = Column(Text, nullable=False)                           # The comment text
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    # Relationships
+    author = relationship("User", back_populates="comments")
 
 class Discussion(Base):
     __tablename__ = "discussions"

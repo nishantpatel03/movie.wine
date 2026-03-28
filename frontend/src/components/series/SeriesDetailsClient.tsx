@@ -8,6 +8,7 @@ import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import { SeasonList } from './SeasonList';
 import { AddToListButton } from '@/components/shared/AddToListButton';
+import { CommentSection } from '@/components/shared/CommentSection';
 import { getImageUrl } from '@/lib/api';
 
 // Shared Animation Variants
@@ -142,7 +143,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                 <div>
                     {/* Tabs */}
                     <div className="flex flex-wrap items-center gap-3 mb-10 pb-2">
-                        {['episodes', 'cast', 'story'].map(tab => (
+                        {['episodes', 'reviews', 'cast', 'story'].map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -169,6 +170,22 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                             ) : (
                                 <p className="text-white/40">No episodes available.</p>
                             )}
+                        </motion.div>
+                    )}
+
+                    {/* REVIEWS TAB */}
+                    {activeTab === 'reviews' && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <CommentSection 
+                                tmdbId={show.id} 
+                                mediaType="tv" 
+                                title={show.name} 
+                                posterPath={show.poster_path} 
+                            />
                         </motion.div>
                     )}
 
