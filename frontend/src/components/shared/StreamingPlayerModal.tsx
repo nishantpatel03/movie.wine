@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ChevronDown, Monitor, Shield, Activity, X, Info } from 'lucide-react';
+import { Play, ChevronDown, Monitor, Shield, Activity, X, Info, Globe } from 'lucide-react';
 import { StreamingLink } from '@/lib/api';
 
 interface StreamingPlayerModalProps {

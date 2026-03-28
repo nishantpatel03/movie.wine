@@ -1,14 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Trash2, ExternalLink, Tv, ChevronRight } from 'lucide-react';
 import { searchMulti, getImageUrl, getStreamingLinks, deleteStreamingLink, StreamingLink, getTVDetails, getTVSeasonDetails } from '@/lib/api';
 import { useUser } from '@clerk/nextjs';
 import { AddLinkModal } from '@/components/admin/AddLinkModal';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminSeriesPage() {
     const { user } = useUser();
+    const searchParams = useSearchParams();
+    const preSelectedId = searchParams.get('id');
+
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -19,6 +23,21 @@ export default function AdminSeriesPage() {
     const [selectedEpisode, setSelectedEpisode] = useState<number | null>(null);
     const [existingLinks, setExistingLinks] = useState<StreamingLink[]>([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (preSelectedId) {
+            loadPreSelectedSeries(parseInt(preSelectedId));
+        }
+    }, [preSelectedId]);
+
+    const loadPreSelectedSeries = async (id: number) => {
+        try {
+            const details = await getTVDetails(id);
+            selectSeries(details);
+        } catch (error) {
+            console.error('Error loading pre-selected series:', error);
+        }
+    };
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -272,6 +291,7 @@ export default function AdminSeriesPage() {
                 tmdbId={selectedSeries?.id}
                 mediaType="tv"
                 title={selectedSeries?.name}
+                posterPath={selectedSeries?.poster_path}
                 seasonNumber={selectedSeason || undefined}
                 episodeNumber={selectedEpisode || undefined}
                 onSuccess={(newLink) => setExistingLinks([...existingLinks, newLink])}

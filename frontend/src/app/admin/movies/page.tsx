@@ -1,20 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Trash2, ExternalLink, Film } from 'lucide-react';
-import { searchMulti, getImageUrl, getStreamingLinks, deleteStreamingLink, StreamingLink } from '@/lib/api';
+import { searchMulti, getImageUrl, getStreamingLinks, deleteStreamingLink, StreamingLink, getMovieDetails } from '@/lib/api';
 import { useUser } from '@clerk/nextjs';
 import { AddLinkModal } from '@/components/admin/AddLinkModal';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminMoviesPage() {
     const { user } = useUser();
+    const searchParams = useSearchParams();
+    const preSelectedId = searchParams.get('id');
+    
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState<any>(null);
     const [existingLinks, setExistingLinks] = useState<StreamingLink[]>([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (preSelectedId) {
+            loadPreSelectedMovie(parseInt(preSelectedId));
+        }
+    }, [preSelectedId]);
+
+    const loadPreSelectedMovie = async (id: number) => {
+        try {
+            const movie = await getMovieDetails(id);
+            selectMovie(movie);
+        } catch (error) {
+            console.error('Error loading pre-selected movie:', error);
+        }
+    };
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -186,6 +205,7 @@ export default function AdminMoviesPage() {
                 tmdbId={selectedMovie?.id}
                 mediaType="movie"
                 title={selectedMovie?.title}
+                posterPath={selectedMovie?.poster_path}
                 onSuccess={(newLink) => setExistingLinks([...existingLinks, newLink])}
             />
         </div>

@@ -492,6 +492,8 @@ export async function getStreamingLinks(
 export async function addStreamingLink(clerkId: string, linkData: {
     tmdb_id: number;
     media_type: 'movie' | 'tv';
+    title?: string;
+    poster_path?: string | null;
     season_number?: number;
     episode_number?: number;
     url: string;
@@ -512,4 +514,8 @@ export async function deleteStreamingLink(clerkId: string, linkId: number): Prom
     const url = `${API_BASE_URL}/links/${clerkId}/${linkId}`;
     const response = await fetch(url, { method: 'DELETE' });
     if (!response.ok) throw new Error(`Failed to delete streaming link: ${response.statusText}`);
+}
+
+export async function getActiveContent(): Promise<any[]> {
+    return fetchFromBackend('/links/content/active');
 }

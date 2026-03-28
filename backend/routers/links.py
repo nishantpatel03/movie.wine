@@ -16,6 +16,8 @@ router = APIRouter(
 class StreamingLinkCreate(BaseModel):
     tmdb_id: int
     media_type: str
+    title: Optional[str] = None
+    poster_path: Optional[str] = None
     season_number: Optional[int] = None
     episode_number: Optional[int] = None
     url: str
@@ -26,6 +28,8 @@ class StreamingLinkResponse(BaseModel):
     id: int
     tmdb_id: int
     media_type: str
+    title: Optional[str] = None
+    poster_path: Optional[str] = None
     season_number: Optional[int] = None
     episode_number: Optional[int] = None
     url: str
@@ -99,9 +103,34 @@ def get_link_stats(db: Session = Depends(get_db)):
     total = db.query(func.count(models.StreamingLink.id)).scalar()
     movies = db.query(func.count(models.StreamingLink.id)).filter(models.StreamingLink.media_type == "movie").scalar()
     tv = db.query(func.count(models.StreamingLink.id)).filter(models.StreamingLink.media_type == "tv").scalar()
+    users = db.query(func.count(models.User.clerk_id)).scalar()
     
     return {
         "total_links": total or 0,
         "movie_links": movies or 0,
-        "tv_links": tv or 0
+        "tv_links": tv or 0,
+        "total_users": users or 0
     }
+
+@router.get("/content/active")
+def get_active_content(db: Session = Depends(get_db)):
+    from sqlalchemy import distinct
+    # Use DISTINCT ON (tmdb_id, media_type) to get one row per movie/series
+    # In SQLAlchemy with Postgres, this needs order_by matching the distinct columns
+    results = db.query(
+        models.StreamingLink.tmdb_id,
+        models.StreamingLink.media_type,
+        models.StreamingLink.title,
+        models.StreamingLink.poster_path
+    ).distinct(models.StreamingLink.tmdb_id, models.StreamingLink.media_type) \
+     .order_by(models.StreamingLink.tmdb_id, models.StreamingLink.media_type) \
+     .all()
+    
+    return [
+        {
+            "tmdb_id": r.tmdb_id,
+            "media_type": r.media_type,
+            "title": r.title,
+            "poster_path": r.poster_path
+        } for r in results if r.title and r.poster_path # Only show items with metadata
+    ]

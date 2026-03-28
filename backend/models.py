@@ -186,6 +186,8 @@ class StreamingLink(Base):
     id = Column(Integer, primary_key=True, index=True)
     tmdb_id = Column(Integer, nullable=False, index=True)
     media_type = Column(String, nullable=False)  # "movie" or "tv"
+    title = Column(String, nullable=True) # Added for easy dashboard listing
+    poster_path = Column(String, nullable=True) # Added for easy dashboard listing
     season_number = Column(Integer, nullable=True)
     episode_number = Column(Integer, nullable=True)
     url = Column(String, nullable=False)

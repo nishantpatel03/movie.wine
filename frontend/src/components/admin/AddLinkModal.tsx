@@ -12,6 +12,7 @@ interface AddLinkModalProps {
     tmdbId: number;
     mediaType: 'movie' | 'tv';
     title: string;
+    posterPath?: string | null;
     seasonNumber?: number;
     episodeNumber?: number;
     onSuccess?: (link: StreamingLink) => void;
@@ -23,6 +24,7 @@ export function AddLinkModal({
     tmdbId, 
     mediaType, 
     title, 
+    posterPath,
     seasonNumber, 
     episodeNumber,
     onSuccess 
@@ -57,6 +59,8 @@ export function AddLinkModal({
             const newLink = await addStreamingLink(user.id, {
                 tmdb_id: tmdbId,
                 media_type: mediaType,
+                title,
+                poster_path: posterPath,
                 url,
                 provider_name: provider,
                 quality,
