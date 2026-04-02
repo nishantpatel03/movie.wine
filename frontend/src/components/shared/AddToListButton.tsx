@@ -13,6 +13,7 @@ interface AddToListButtonProps {
     posterPath?: string | null;
     /** Optional: icon-only compact mode */
     compact?: boolean;
+    isHero?: boolean;
 }
 
 export function AddToListButton({
@@ -21,6 +22,7 @@ export function AddToListButton({
     title,
     posterPath,
     compact = false,
+    isHero = false,
 }: AddToListButtonProps) {
     const [open, setOpen] = useState(false);
     const [newListName, setNewListName] = useState('');
@@ -92,22 +94,25 @@ export function AddToListButton({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleButtonClick}
-                className={`flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-all rounded-xl border
+                className={`flex items-center gap-2 font-black uppercase tracking-widest transition-all rounded-2xl border
                     ${isInAnyList
-                        ? 'bg-primary/20 border-primary text-primary hover:bg-primary/30'
-                        : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
+                        ? 'bg-primary/20 border-primary text-primary hover:bg-primary/30 shadow-[0_0_20px_rgba(244,192,37,0.1)]'
+                        : isHero 
+                            ? 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)]'
+                            : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
                     }
-                    ${compact ? 'p-3' : 'px-5 py-3'}
+                    ${compact ? 'p-3' : isHero ? 'px-6 py-3.5 lg:px-8 lg:py-4' : 'px-5 py-3'}
+                    ${isHero ? 'text-[11px]' : 'text-xs'}
                 `}
                 title={isInAnyList ? 'In your list' : 'Add to list'}
             >
                 {isInAnyList ? (
-                    <Check size={16} className="shrink-0" />
+                    <Check size={isHero ? 20 : 16} className="shrink-0" />
                 ) : (
-                    <Plus size={16} className="shrink-0" />
+                    <Plus size={isHero ? 20 : 16} className="shrink-0" />
                 )}
-                {!compact && <span>{isInAnyList ? 'In My List' : 'My List'}</span>}
-                {!compact && <ChevronDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />}
+                {!compact && <span>{isInAnyList ? 'MY LIST' : 'MY LIST'}</span>}
+                {!compact && <ChevronDown size={isHero ? 16 : 14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />}
             </motion.button>
 
             {/* Dropdown */}

@@ -58,8 +58,13 @@ export default async function SeasonDetailsPage({ params }: { params: Promise<{ 
                             />
                         )}
                         <div>
-                            <Link href={`/series/${resolvedParams.slug}`} className="inline-flex items-center gap-2 text-white/40 hover:text-white/80 transition-colors text-sm font-medium mb-4 group">
-                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to {show.name}
+                            {/* Floating Back Button */}
+                            <Link 
+                                href={`/series/${resolvedParams.slug}`} 
+                                className="absolute top-12 left-6 lg:left-12 z-20 group flex items-center gap-3 text-white/50 hover:text-white transition-all bg-black/20 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/20 shadow-xl"
+                            >
+                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                                <span className="text-xs font-bold tracking-widest uppercase">Back to Series</span>
                             </Link>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-serif text-white tracking-tight leading-tight">{seasonDetails.name}</h1>
                             {seasonDetails.air_date && (

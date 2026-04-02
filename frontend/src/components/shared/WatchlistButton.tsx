@@ -88,12 +88,12 @@ export function WatchlistButton({ tmdbId, mediaType, title, posterPath, isHero =
             whileTap={{ scale: 0.95 }}
             onClick={toggleWatchlist}
             disabled={isLoading}
-            className={`flex items-center justify-center gap-2 rounded-xl transition-all font-bold relative overflow-hidden group ${
+            className={`flex items-center justify-center gap-2 rounded-2xl transition-all font-black relative overflow-hidden group border ${
                 isInWatchlist 
-                ? 'bg-primary/20 text-primary border border-primary/40' 
+                ? 'bg-primary/20 text-primary border-primary/40 shadow-[0_0_20px_rgba(244,192,37,0.1)]' 
                 : isHero 
-                    ? 'px-8 py-4 bg-white/10 text-white border border-white/20 hover:bg-white/20' 
-                    : 'p-3 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                    ? 'px-6 py-3.5 lg:px-8 lg:py-4 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)]' 
+                    : 'p-3 bg-white/5 text-slate-400 hover:text-white border-white/10 hover:bg-white/10'
             }`}
         >
             <AnimatePresence mode="wait">
@@ -119,7 +119,7 @@ export function WatchlistButton({ tmdbId, mediaType, title, posterPath, isHero =
             </AnimatePresence>
             
             {isHero && (
-                <span>{isInWatchlist ? 'In Watchlist' : 'Add to Watchlist'}</span>
+                <span className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap">WATCHLIST</span>
             )}
 
             {/* Shine effect on hover */}

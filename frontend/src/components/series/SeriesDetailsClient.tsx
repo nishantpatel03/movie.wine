@@ -73,18 +73,25 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                 {/* Bottom fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0a0904] to-transparent z-10" />
 
+                {/* Back button - Absolute for OTT look */}
+                <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="absolute top-12 left-6 lg:left-12 z-30"
+                >
+                    <Link href="/series" className="group flex items-center gap-3 text-white/60 hover:text-white transition-all bg-black/20 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/20 shadow-xl">
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                        <span className="text-xs font-bold tracking-widest uppercase">Back to Browse</span>
+                    </Link>
+                </motion.div>
+
                 <motion.div 
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
                     className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col gap-6 lg:w-[65%]"
                 >
-                    {/* Back */}
-                    <motion.div variants={fadeInUp}>
-                        <Link href="/series" className="inline-flex items-center gap-2 text-white/40 hover:text-white/80 transition-colors text-sm font-medium mb-10 w-fit group">
-                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Browse
-                        </Link>
-                    </motion.div>
 
                     {/* Status Badge */}
                     <motion.div variants={fadeInUp} className="mb-2">
@@ -134,14 +141,14 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                         ))}
                     </motion.div>
 
-                    {/* Action buttons */}
-                    <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-3 mt-4">
+                    {/* Action Buttons - Premium Unified Design */}
+                    <div className="flex items-center gap-3 pt-10 overflow-x-auto no-scrollbar pb-4 md:pb-0">
                         {streamingLinks.length > 0 && (
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setIsPlayerModalOpen(true)}
-                                className="flex items-center gap-2 px-8 py-3 lg:px-10 lg:py-4 rounded-xl font-bold transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_0_20px_rgba(255,179,71,0.3)]"
+                                className="h-[52px] flex items-center gap-2.5 px-8 rounded-full font-black transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_8px_20px_-4px_rgba(244,192,37,0.4)] shrink-0 text-xs tracking-[0.15em] uppercase"
                             >
                                 <PlayCircle className="w-5 h-5 fill-current" />
                                 WATCH NOW
@@ -150,30 +157,33 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
 
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
 
-                        <WatchedButton
-                            tmdbId={show.id}
-                            mediaType="tv"
-                            title={show.name}
-                            posterPath={show.poster_path}
-                            runtime={(show.episode_run_time?.[0] || 0) * (show.number_of_episodes || 0)}
-                            isHero={true}
-                        />
-                        
-                        <AddToListButton
-                            tmdbId={show.id}
-                            mediaType="tv"
-                            title={show.name}
-                            posterPath={show.poster_path}
-                        />
+                        <div className="flex items-center gap-3">
+                            <WatchedButton
+                                tmdbId={show.id}
+                                mediaType="tv"
+                                title={show.name}
+                                posterPath={show.poster_path}
+                                runtime={(show.episode_run_time?.[0] || 0) * (show.number_of_episodes || 0)}
+                                isHero={true}
+                            />
+                            
+                            <AddToListButton
+                                tmdbId={show.id}
+                                mediaType="tv"
+                                title={show.name}
+                                posterPath={show.poster_path}
+                                isHero={true}
+                            />
 
-                        <WatchlistButton
-                            tmdbId={show.id}
-                            mediaType="tv"
-                            title={show.name}
-                            posterPath={show.poster_path}
-                            isHero={true}
-                        />
-                    </motion.div>
+                            <WatchlistButton
+                                tmdbId={show.id}
+                                mediaType="tv"
+                                title={show.name}
+                                posterPath={show.poster_path}
+                                isHero={true}
+                            />
+                        </div>
+                    </div>
                 </motion.div>
             </div>
 
@@ -358,6 +368,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                 onClose={() => setIsPlayerModalOpen(false)}
                 links={streamingLinks}
                 title={show.name}
+                posterPath={show.poster_path}
             />
         </div>
     );

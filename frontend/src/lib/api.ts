@@ -468,6 +468,8 @@ export interface StreamingLink {
     id: number;
     tmdb_id: number;
     media_type: 'movie' | 'tv';
+    title?: string;
+    poster_path?: string | null;
     season_number?: number;
     episode_number?: number;
     url: string;

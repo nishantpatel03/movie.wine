@@ -84,18 +84,25 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                     <div className="absolute inset-0 w-full lg:w-3/4 bg-gradient-to-r from-[#0a0904] via-[#0a0904]/90 to-transparent"></div>
                 </motion.div>
 
+                {/* Back button - Positioned absolutely for a cleaner look */}
+                <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="absolute top-12 left-6 lg:left-12 z-20"
+                >
+                    <Link href="/movies" className="group flex items-center gap-3 text-slate-400 hover:text-white transition-all bg-black/20 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/20 shadow-xl">
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                        <span className="text-xs font-bold tracking-widest uppercase">Back</span>
+                    </Link>
+                </motion.div>
+
                 <motion.div 
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
                     className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col gap-6 lg:gap-8 lg:w-2/3"
                 >
-                    {/* Back button */}
-                    <motion.div variants={fadeInUp}>
-                        <Link href="/movies" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase mb-2 w-fit group">
-                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back
-                        </Link>
-                    </motion.div>
 
                     <div className="space-y-4">
                         <motion.h1 variants={fadeInRight} className="text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-none drop-shadow-2xl font-bold tracking-tighter">
@@ -152,14 +159,14 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                         ))}
                     </motion.div>
 
-                    {/* Action Buttons */}
-                    <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-6 pt-10">
+                    {/* Action Buttons - Premium Unified Design */}
+                    <div className="flex items-center gap-3 pt-10 overflow-x-auto no-scrollbar pb-4 md:pb-0">
                         {streamingLinks.length > 0 && (
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setIsPlayerModalOpen(true)}
-                                className="flex items-center gap-2 px-8 py-3 lg:px-10 lg:py-4 rounded-xl font-bold transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_0_20px_rgba(255,179,71,0.3)]"
+                                className="h-[52px] flex items-center gap-2.5 px-8 rounded-full font-black transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_8px_20px_-4px_rgba(244,192,37,0.4)] shrink-0 text-xs tracking-[0.15em] uppercase"
                             >
                                 <PlayCircle className="w-5 h-5 fill-current" />
                                 WATCH NOW
@@ -168,30 +175,33 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
 
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
 
-                        <WatchedButton
-                            tmdbId={movie.id}
-                            mediaType="movie"
-                            title={movie.title}
-                            posterPath={movie.poster_path}
-                            runtime={movie.runtime}
-                            isHero={true}
-                        />
+                        <div className="flex items-center gap-3">
+                            <WatchedButton
+                                tmdbId={movie.id}
+                                mediaType="movie"
+                                title={movie.title}
+                                posterPath={movie.poster_path}
+                                runtime={movie.runtime}
+                                isHero={true}
+                            />
 
-                        <AddToListButton
-                            tmdbId={movie.id}
-                            mediaType="movie"
-                            title={movie.title}
-                            posterPath={movie.poster_path}
-                        />
+                            <AddToListButton
+                                tmdbId={movie.id}
+                                mediaType="movie"
+                                title={movie.title}
+                                posterPath={movie.poster_path}
+                                isHero={true}
+                            />
 
-                        <WatchlistButton
-                            tmdbId={movie.id}
-                            mediaType="movie"
-                            title={movie.title}
-                            posterPath={movie.poster_path}
-                            isHero={true}
-                        />
-                    </motion.div>
+                            <WatchlistButton
+                                tmdbId={movie.id}
+                                mediaType="movie"
+                                title={movie.title}
+                                posterPath={movie.poster_path}
+                                isHero={true}
+                            />
+                        </div>
+                    </div>
                 </motion.div>
             </section>
 
@@ -310,6 +320,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                 onClose={() => setIsPlayerModalOpen(false)}
                 links={streamingLinks}
                 title={movie.title}
+                posterPath={movie.poster_path}
             />
         </div>
     );

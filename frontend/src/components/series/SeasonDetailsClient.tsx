@@ -140,6 +140,7 @@ export function SeasonDetailsClient({ seasonDetails, show, slug }: SeasonDetails
                 onClose={() => setIsPlayerModalOpen(false)}
                 links={activeLinks}
                 title={activeEpisodeTitle}
+                posterPath={show.poster_path}
             />
 
             {isLoadingLinks && (
