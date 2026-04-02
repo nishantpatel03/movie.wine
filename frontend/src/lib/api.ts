@@ -1,5 +1,5 @@
 // Base URL for the local FastAPI Python backend
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'http://localhost:8000';
 
 export interface User {
     clerk_id: string;
@@ -138,8 +138,43 @@ export async function getDiscussions(): Promise<Discussion[]> {
     return fetchFromBackend('/community/discussions');
 }
 
+export async function getDiscussion(id: string | number): Promise<Discussion> {
+    return fetchFromBackend(`/community/discussions/${id}`);
+}
+
+export async function uploadImage(file: File): Promise<{ url: string }> {
+    const url = `${API_BASE_URL}/community/upload`;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+    });
+    if (!response.ok) throw new Error(`Failed to upload image: ${response.statusText}`);
+    return await response.json();
+}
+
 export async function getWatchParties(): Promise<WatchParty[]> {
     return fetchFromBackend('/community/watch-parties');
+}
+
+export async function createDiscussion(authorId: string, data: {
+    title: string;
+    category: string;
+    movie_title: string;
+    excerpt: string;
+    content?: string;
+    poster_url?: string;
+}): Promise<Discussion> {
+    const url = `${API_BASE_URL}/community/discussions/${authorId}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error(`Failed to create discussion: ${response.statusText}`);
+    return await response.json();
 }
 
 export async function getColumnists(): Promise<User[]> {
@@ -520,4 +555,60 @@ export async function deleteStreamingLink(clerkId: string, linkId: number): Prom
 
 export async function getActiveContent(): Promise<any[]> {
     return fetchFromBackend('/links/content/active');
+}
+
+// --- Notifications Types ---
+
+export interface Notification {
+    id: number;
+    user_id: string;
+    title: string;
+    message: string;
+    type: string;
+    link: string | null;
+    is_read: boolean;
+    created_at: string;
+}
+
+// --- Notifications API ---
+
+export async function getUserNotifications(user_id: string, page: number = 1): Promise<{
+    notifications: Notification[];
+    unread_count: number;
+    total_count: number;
+}> {
+    return fetchFromBackend(`/api/notifications/${user_id}`, { page });
+}
+
+export async function getUnreadNotificationCount(user_id: string): Promise<{ unread_count: number }> {
+    return fetchFromBackend(`/api/notifications/${user_id}/unread-count`);
+}
+
+export async function markNotificationAsRead(notification_id: number): Promise<void> {
+    const url = `${API_BASE_URL}/api/notifications/${notification_id}/read`;
+    await fetch(url, { method: 'POST' });
+}
+
+export async function markAllNotificationsAsRead(user_id: string): Promise<void> {
+    const url = `${API_BASE_URL}/api/notifications/${user_id}/mark-read`;
+    await fetch(url, { method: 'POST' });
+}
+
+// --- Announcements ---
+
+export interface Announcement {
+    id: number;
+    title: string;
+    content: string;
+    type: string;
+    created_at: string;
+}
+
+export async function getAnnouncements(user_id: string): Promise<Announcement[]> {
+    return fetchFromBackend(`/api/notifications/announcements/${user_id}`);
+}
+
+export async function dismissAnnouncement(announcement_id: number, user_id: string): Promise<void> {
+    const url = `${API_BASE_URL}/api/notifications/announcements/${announcement_id}/dismiss/${user_id}`;
+    await fetch(url, { method: 'POST' });
 }

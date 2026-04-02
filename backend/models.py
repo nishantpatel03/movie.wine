@@ -32,6 +32,39 @@ class User(Base):
     comments = relationship("Comment", back_populates="author", cascade="all, delete")
     watchlist = relationship("WatchlistItem", back_populates="user", cascade="all, delete")
     watched_items = relationship("WatchedItem", back_populates="user", cascade="all, delete")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete")
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.clerk_id"), nullable=False, index=True)
+    title = Column(String, nullable=False)
+    message = Column(Text, nullable=False)
+    type = Column(String, default="info") # info, success, warning, error, new_content
+    link = Column(String, nullable=True) # Optional URL to link to
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationship to User
+    user = relationship("User", back_populates="notifications")
+
+class Announcement(Base):
+    __tablename__ = "announcements"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    type = Column(String, default="info") # info, success, warning, important
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    expires_at = Column(DateTime(timezone=True), nullable=True)
+
+class AnnouncementDismissal(Base):
+    __tablename__ = "announcement_dismissals"
+
+    announcement_id = Column(Integer, ForeignKey("announcements.id"), primary_key=True)
+    user_id = Column(String, ForeignKey("users.clerk_id"), primary_key=True)
+    dismissed_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class WatchlistItem(Base):
     __tablename__ = "watchlist_items"

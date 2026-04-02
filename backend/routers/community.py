@@ -1,12 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 from database import get_db
 import models
+import httpx
+import os
+import base64
 
 router = APIRouter(prefix="/community", tags=["Community"])
+
+# --- ImgBB API Key ---
+IMGBB_API_KEY = os.getenv("IMGBB_API_KEY")
 
 # --- Pydantic Models for Response ---
 
@@ -81,7 +87,35 @@ class WatchPartyBase(BaseModel):
     class Config:
         from_attributes = True
 
+class DiscussionCreate(BaseModel):
+    title: str
+    category: str
+    movie_title: str
+    tmdb_movie_id: Optional[int] = None
+    release_year: Optional[int] = None
+    excerpt: str
+    content: Optional[str] = None
+    poster_url: Optional[str] = None
+
 # --- API Endpoints ---
+
+@router.post("/discussions/{author_id}", response_model=DiscussionBase)
+def create_discussion(author_id: str, discussion: DiscussionCreate, db: Session = Depends(get_db)):
+    db_discussion = models.Discussion(
+        author_id=author_id,
+        is_hot=False,
+        is_featured=False,
+        **discussion.dict()
+    )
+    db.add(db_discussion)
+    db.commit()
+    db.refresh(db_discussion)
+    
+    # Return with counts (0 for new)
+    result = DiscussionBase.from_orm(db_discussion)
+    result.replies_count = 0
+    result.likes_count = 0
+    return result
 
 @router.get("/discussions", response_model=List[DiscussionBase])
 def get_discussions(db: Session = Depends(get_db)):
@@ -94,6 +128,17 @@ def get_discussions(db: Session = Depends(get_db)):
         d_dict.replies_count = len(d.replies)
         d_dict.likes_count = len(d.likes)
         result.append(d_dict)
+    return result
+
+@router.get("/discussions/{discussion_id}", response_model=DiscussionBase)
+def get_discussion(discussion_id: int, db: Session = Depends(get_db)):
+    db_discussion = db.query(models.Discussion).filter(models.Discussion.id == discussion_id).first()
+    if not db_discussion:
+        raise HTTPException(status_code=404, detail="Discussion not found")
+    
+    result = DiscussionBase.from_orm(db_discussion)
+    result.replies_count = len(db_discussion.replies)
+    result.likes_count = len(db_discussion.likes)
     return result
 
 @router.get("/watch-parties", response_model=List[WatchPartyBase])
@@ -175,3 +220,29 @@ def export_user_data(clerk_id: str, db: Session = Depends(get_db)):
         "profile": UserBase.from_orm(db_user),
         "lists": user_lists
     }
+
+@router.post("/upload")
+async def upload_image(file: UploadFile = File(...)):
+    if not IMGBB_API_KEY:
+        raise HTTPException(status_code=500, detail="ImgBB API key not configured")
+    
+    # Read file content
+    contents = await file.read()
+    
+    # Encode to base64
+    base64_image = base64.b64encode(contents).decode('utf-8')
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "https://api.imgbb.com/1/upload",
+            data={
+                "key": IMGBB_API_KEY,
+                "image": base64_image,
+            }
+        )
+    
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="Failed to upload image to ImgBB")
+    
+    data = response.json()
+    return {"url": data["data"]["url"]}

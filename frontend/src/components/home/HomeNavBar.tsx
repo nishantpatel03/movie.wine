@@ -5,9 +5,12 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { LiveSearch } from '@/components/shared/LiveSearch';
+import { NotificationDropdown } from '@/components/notifications/notification-dropdown';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export function HomeNavBar() {
     const [isScrolled, setIsScrolled] = useState(false);
+    useNotifications(); // Phase 11 polling
 
     useEffect(() => {
         const handleScroll = () => {
@@ -61,11 +64,15 @@ export function HomeNavBar() {
                     </div>
 
                     <div className="flex items-center gap-6 shrink-0">
-                        {/* Notification Bell */}
-                        <button className="relative text-white/40 hover:text-white transition-colors group">
-                            <span className="material-symbols-outlined text-2xl">notifications</span>
-                            <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
-                        </button>
+                        {/* Notification Dropdown */}
+                        <SignedIn>
+                            <NotificationDropdown />
+                        </SignedIn>
+                        <SignedOut>
+                            <button className="relative text-white/40 hover:text-white transition-colors group">
+                                <span className="material-symbols-outlined text-2xl text-slate-600">notifications</span>
+                            </button>
+                        </SignedOut>
 
                         {/* My List icon — only when signed in */}
                         <SignedIn>

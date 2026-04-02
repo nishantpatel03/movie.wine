@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Search, ArrowUpRight, Plus } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { getDiscussions, getWatchParties, getColumnists, Discussion, WatchParty, User } from '@/lib/api';
+import { getDiscussions, getWatchParties, getColumnists, Discussion, WatchParty, User, createSlug } from '@/lib/api';
+import { SubmitPieceModal } from '@/components/community/SubmitPieceModal';
 
 // ─── Helper: Time Ago ──────────────────────────────────────────────────────────
 
@@ -35,28 +36,30 @@ export default function CommunityPage() {
     const [watchParties, setWatchParties] = useState<WatchParty[]>([]);
     const [columnists, setColumnists] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
     const headerBorderOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
 
-    useEffect(() => {
-        async function loadData() {
-            try {
-                const [dData, wData, cData] = await Promise.all([
-                    getDiscussions(),
-                    getWatchParties(),
-                    getColumnists()
-                ]);
-                setDiscussions(dData);
-                setWatchParties(wData);
-                setColumnists(cData);
-            } catch (error) {
-                console.error("Failed to load community data:", error);
-            } finally {
-                setIsLoading(false);
-            }
+    const loadData = async () => {
+        try {
+            const [dData, wData, cData] = await Promise.all([
+                getDiscussions(),
+                getWatchParties(),
+                getColumnists()
+            ]);
+            setDiscussions(dData);
+            setWatchParties(wData);
+            setColumnists(cData);
+        } catch (error) {
+            console.error("Failed to load community data:", error);
+        } finally {
+            setIsLoading(false);
         }
+    };
+
+    useEffect(() => {
         loadData();
     }, []);
 
@@ -161,12 +164,21 @@ export default function CommunityPage() {
                             <div className="text-sm font-bold tracking-[0.2em] text-primary drop-shadow-[0_0_8px_rgba(244,192,37,0.4)] mb-2">ISSUE № 42</div>
                             <div className="text-xs text-slate-400 uppercase tracking-widest font-mono">March 2026</div>
                         </div>
-                        <button className="flex items-center gap-3 bg-white text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase hover:bg-primary shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(244,192,37,0.4)] transition-all duration-300 group">
+                        <button 
+                            onClick={() => setIsSubmitModalOpen(true)}
+                            className="flex items-center gap-3 bg-white text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase hover:bg-primary shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(244,192,37,0.4)] transition-all duration-300 group"
+                        >
                             <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
                             Submit Piece
                         </button>
                     </motion.div>
                 </header>
+
+                <SubmitPieceModal 
+                    isOpen={isSubmitModalOpen}
+                    onClose={() => setIsSubmitModalOpen(false)}
+                    onSuccess={loadData}
+                />
 
                 {/* ── Search Bar ── */}
                 <motion.div 
@@ -208,101 +220,103 @@ export default function CommunityPage() {
                             ) : filteredDiscussions.map((d, i) => (
                                 d.is_featured ? (
                                     /* Featured Editorial Block */
-                                    <motion.article 
-                                        key={d.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.6, delay: i * 0.1 }}
-                                        className="group cursor-pointer block border border-white/5 bg-white/[0.02] backdrop-blur-sm rounded-3xl p-6 md:p-8 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 shadow-2xl"
-                                    >
-                                        <div className="flex items-center justify-between mb-8">
-                                            <div className="flex items-center gap-3">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(244,192,37,0.8)]"></span>
-                                                <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase drop-shadow-[0_0_5px_rgba(244,192,37,0.5)]">{d.category}</span>
-                                            </div>
-                                            <span className="text-xs font-mono text-slate-500 bg-black/40 px-3 py-1 rounded-full uppercase tracking-widest border border-white/5">{timeAgo(d.created_at)}</span>
-                                        </div>
-                                        
-                                        <div className="relative overflow-hidden aspect-[21/9] mb-10 rounded-2xl bg-[#111] border border-white/5 shadow-inner">
-                                            <motion.img 
-                                                src={d.poster_url || '/placeholder-poster.png'} 
-                                                alt={d.title}
-                                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
-                                        </div>
-                                        
-                                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight mb-6 group-hover:text-primary transition-colors">{d.title}</h2>
-                                        <p className="text-lg md:text-xl text-slate-400 font-light leading-relaxed mb-10">{d.excerpt}</p>
-                                        
-                                        <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-white/5">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-full border border-white/10 overflow-hidden flex items-center justify-center text-sm font-serif italic bg-white/5">
-                                                    {d.author.avatar_url ? (
-                                                        <img src={d.author.avatar_url} alt={d.author.username} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        d.author.username.charAt(0)
-                                                    )}
+                                    <Link key={d.id} href={`/community/discussions/${createSlug(d.id, d.title)}`} className="block group">
+                                        <motion.article 
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.6, delay: i * 0.1 }}
+                                            className="border border-white/5 bg-white/[0.02] backdrop-blur-sm rounded-3xl p-6 md:p-8 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 shadow-2xl"
+                                        >
+                                            <div className="flex items-center justify-between mb-8">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(244,192,37,0.8)]"></span>
+                                                    <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase drop-shadow-[0_0_5px_rgba(244,192,37,0.5)]">{d.category}</span>
                                                 </div>
-                                                <div>
-                                                    <span className="block text-sm font-bold tracking-widest text-white uppercase mb-1">{d.author.username}</span>
-                                                    <span className="block text-[10px] text-slate-500 uppercase tracking-widest">{d.author.title || 'Contributor'}</span>
-                                                </div>
+                                                <span className="text-xs font-mono text-slate-500 bg-black/40 px-3 py-1 rounded-full uppercase tracking-widest border border-white/5">{timeAgo(d.created_at)}</span>
                                             </div>
                                             
-                                            <div className="flex items-center gap-6 text-slate-400 font-mono text-sm bg-black/40 px-5 py-2.5 rounded-full border border-white/5">
-                                                <span className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer group/action">
-                                                    <span className="material-symbols-outlined text-[18px] group-hover/action:scale-110 transition-transform">favorite</span> {d.likes_count}
-                                                </span>
-                                                <div className="w-[1px] h-4 bg-white/10"></div>
-                                                <span className="flex items-center gap-2 hover:text-white transition-colors cursor-pointer group/action">
-                                                    <span className="material-symbols-outlined text-[18px] group-hover/action:scale-110 transition-transform">chat_bubble_outline</span> {d.replies_count}
-                                                </span>
+                                            <div className="relative overflow-hidden aspect-[21/9] mb-10 rounded-2xl bg-[#111] border border-white/5 shadow-inner">
+                                                <motion.img 
+                                                    src={d.poster_url || '/placeholder-poster.png'} 
+                                                    alt={d.title}
+                                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                                             </div>
-                                        </div>
-                                    </motion.article>
+                                            
+                                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight mb-6 group-hover:text-primary transition-colors">{d.title}</h2>
+                                            <p className="text-lg md:text-xl text-slate-400 font-light leading-relaxed mb-10">{d.excerpt}</p>
+                                            
+                                            <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-white/5">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-full border border-white/10 overflow-hidden flex items-center justify-center text-sm font-serif italic bg-white/5">
+                                                        {d.author.avatar_url ? (
+                                                            <img src={d.author.avatar_url} alt={d.author.username} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            d.author.username.charAt(0)
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <span className="block text-sm font-bold tracking-widest text-white uppercase mb-1">{d.author.username}</span>
+                                                        <span className="block text-[10px] text-slate-500 uppercase tracking-widest">{d.author.title || 'Contributor'}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex items-center gap-6 text-slate-400 font-mono text-sm bg-black/40 px-5 py-2.5 rounded-full border border-white/5">
+                                                    <span className="flex items-center gap-2 group/action">
+                                                        <span className="material-symbols-outlined text-[18px] group-hover/action:scale-110 transition-transform">favorite</span> {d.likes_count}
+                                                    </span>
+                                                    <div className="w-[1px] h-4 bg-white/10"></div>
+                                                    <span className="flex items-center gap-2 group/action">
+                                                        <span className="material-symbols-outlined text-[18px] group-hover/action:scale-110 transition-transform">chat_bubble_outline</span> {d.replies_count}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </motion.article>
+                                    </Link>
                                 ) : (
                                     /* Standard List Item */
-                                    <motion.article 
-                                        key={d.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.5, delay: i * 0.05 }}
-                                        className="group cursor-pointer grid grid-cols-1 md:grid-cols-12 gap-6 items-start p-6 rounded-3xl hover:bg-white/[0.03] border border-transparent hover:border-white/5 transition-all duration-300 relative"
-                                    >
-                                        <div className="absolute left-0 top-10 bottom-10 w-[2px] bg-primary/0 group-hover:bg-primary/50 transition-colors rounded-r-full"></div>
-                                        
-                                        <div className="md:col-span-3 flex flex-col gap-3">
-                                            <span className="text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase group-hover:text-primary transition-colors flex items-center gap-2">
-                                                <span className="w-1 h-1 rounded-full bg-current"></span>
-                                                {d.category}
-                                            </span>
-                                            <span className="text-[10px] font-mono text-slate-600 bg-white/5 inline-block w-max px-2 py-1 rounded-md">{timeAgo(d.created_at)}</span>
-                                        </div>
-                                        
-                                        <div className="md:col-span-9">
-                                            <h3 className="text-2xl md:text-3xl font-serif mb-4 leading-snug group-hover:text-white text-slate-300 transition-colors">
-                                                {d.title}
-                                            </h3>
-                                            <p className="text-slate-500 font-light leading-relaxed mb-8 line-clamp-2">
-                                                {d.excerpt}
-                                            </p>
+                                    <Link key={d.id} href={`/community/discussions/${createSlug(d.id, d.title)}`} className="block group">
+                                        <motion.article 
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.5, delay: i * 0.05 }}
+                                            className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start p-6 rounded-3xl hover:bg-white/[0.03] border border-transparent hover:border-white/5 transition-all duration-300 relative"
+                                        >
+                                            <div className="absolute left-0 top-10 bottom-10 w-[2px] bg-primary/0 group-hover:bg-primary/50 transition-colors rounded-r-full"></div>
                                             
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-6 h-6 rounded-full overflow-hidden bg-white/10 border border-white/5">
-                                                        {d.author.avatar_url && <img src={d.author.avatar_url} alt={d.author.username} className="w-full h-full object-cover" />}
+                                            <div className="md:col-span-3 flex flex-col gap-3">
+                                                <span className="text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase group-hover:text-primary transition-colors flex items-center gap-2">
+                                                    <span className="w-1 h-1 rounded-full bg-current"></span>
+                                                    {d.category}
+                                                </span>
+                                                <span className="text-[10px] font-mono text-slate-600 bg-white/5 inline-block w-max px-2 py-1 rounded-md">{timeAgo(d.created_at)}</span>
+                                            </div>
+                                            
+                                            <div className="md:col-span-9">
+                                                <h3 className="text-2xl md:text-3xl font-serif mb-4 leading-snug group-hover:text-white text-slate-300 transition-colors">
+                                                    {d.title}
+                                                </h3>
+                                                <p className="text-slate-500 font-light leading-relaxed mb-8 line-clamp-2">
+                                                    {d.excerpt}
+                                                </p>
+                                                
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-6 h-6 rounded-full overflow-hidden bg-white/10 border border-white/5">
+                                                            {d.author.avatar_url && <img src={d.author.avatar_url} alt={d.author.username} className="w-full h-full object-cover" />}
+                                                        </div>
+                                                        <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">{d.author.username}</span>
                                                     </div>
-                                                    <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">{d.author.username}</span>
-                                                </div>
-                                                <div className="flex items-center gap-4 text-slate-500 font-mono text-xs">
-                                                    <span className="hover:text-primary transition-colors cursor-pointer px-2 py-1 rounded hover:bg-primary/10">+ {d.likes_count}</span>
-                                                    <span>/</span>
-                                                    <span className="hover:text-white transition-colors cursor-pointer px-2 py-1 rounded hover:bg-white/10">R {d.replies_count}</span>
+                                                    <div className="flex items-center gap-4 text-slate-500 font-mono text-xs">
+                                                        <span className="px-2 py-1 rounded">+ {d.likes_count}</span>
+                                                        <span>/</span>
+                                                        <span className="px-2 py-1 rounded">R {d.replies_count}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </motion.article>
+                                        </motion.article>
+                                    </Link>
                                 )
                             ))}
                         </AnimatePresence>

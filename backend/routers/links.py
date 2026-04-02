@@ -59,10 +59,34 @@ def verify_admin(clerk_id: str, db: Session):
 def add_streaming_link(clerk_id: str, link: StreamingLinkCreate, db: Session = Depends(get_db)):
     verify_admin(clerk_id, db)
     
+    # Check if this is the first link for this content to avoid spamming
+    existing_link = db.query(models.StreamingLink).filter(
+        models.StreamingLink.tmdb_id == link.tmdb_id,
+        models.StreamingLink.media_type == link.media_type
+    ).first()
+
     db_link = models.StreamingLink(**link.dict())
     db.add(db_link)
     db.commit()
     db.refresh(db_link)
+
+    # If it's new content, notify everyone
+    if not existing_link:
+        users = db.query(models.User).all()
+        notifications = []
+        for user in users:
+            notifications.append(models.Notification(
+                user_id=user.clerk_id,
+                title="New Content Added!",
+                message=f"'{link.title}' is now available on MovieWine. Start watching now!",
+                type="new_content",
+                link=f"/{'movies' if link.media_type == 'movie' else 'series'}/{link.tmdb_id}"
+            ))
+        
+        if notifications:
+            db.bulk_save_objects(notifications)
+            db.commit()
+
     return db_link
 
 @router.get("/{tmdb_id}", response_model=List[StreamingLinkResponse])
