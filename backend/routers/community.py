@@ -129,17 +129,18 @@ def get_discussions(db: Session = Depends(get_db)):
         d_dict.likes_count = len(d.likes)
         result.append(d_dict)
     return result
-
+ 
 @router.get("/discussions/{discussion_id}", response_model=DiscussionBase)
 def get_discussion(discussion_id: int, db: Session = Depends(get_db)):
-    db_discussion = db.query(models.Discussion).filter(models.Discussion.id == discussion_id).first()
-    if not db_discussion:
+    discussion = db.query(models.Discussion).filter(models.Discussion.id == discussion_id).first()
+    if not discussion:
         raise HTTPException(status_code=404, detail="Discussion not found")
     
-    result = DiscussionBase.from_orm(db_discussion)
-    result.replies_count = len(db_discussion.replies)
-    result.likes_count = len(db_discussion.likes)
-    return result
+    # Enrich with counts
+    d_dict = DiscussionBase.from_orm(discussion)
+    d_dict.replies_count = len(discussion.replies)
+    d_dict.likes_count = len(discussion.likes)
+    return d_dict
 
 @router.get("/watch-parties", response_model=List[WatchPartyBase])
 def get_watch_parties(db: Session = Depends(get_db)):

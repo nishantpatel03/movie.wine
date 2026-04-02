@@ -39,7 +39,7 @@ export default function CommunityPage() {
     const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+    const { scrollYProgress } = useScroll();
     const headerBorderOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
 
     const loadData = async () => {
