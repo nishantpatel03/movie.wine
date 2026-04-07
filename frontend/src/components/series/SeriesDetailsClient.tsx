@@ -142,7 +142,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                     </motion.div>
 
                     {/* Action Buttons - Premium Unified Design */}
-                    <div className="flex items-center gap-3 pt-10 overflow-x-auto overflow-y-hidden no-scrollbar pb-4 md:pb-0">
+                    <div className="flex items-center gap-3 pt-10 overflow-x-auto no-scrollbar pb-4 md:pb-0">
                         {streamingLinks.length > 0 && (
                             <motion.button
                                 whileHover={{ scale: 1.05 }}

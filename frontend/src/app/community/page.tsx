@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 import { Search, ArrowUpRight, Plus } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { getDiscussions, getWatchParties, getColumnists, Discussion, WatchParty, User, createSlug } from '@/lib/api';
@@ -31,6 +31,7 @@ function timeAgo(dateString: string) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CommunityPage() {
+    const { user, isSignedIn } = useUser();
     const [searchQuery, setSearchQuery] = useState('');
     const [discussions, setDiscussions] = useState<Discussion[]>([]);
     const [watchParties, setWatchParties] = useState<WatchParty[]>([]);
@@ -308,10 +309,21 @@ export default function CommunityPage() {
                                                         </div>
                                                         <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">{d.author.username}</span>
                                                     </div>
-                                                    <div className="flex items-center gap-4 text-slate-500 font-mono text-xs">
-                                                        <span className="px-2 py-1 rounded">+ {d.likes_count}</span>
-                                                        <span>/</span>
-                                                        <span className="px-2 py-1 rounded">R {d.replies_count}</span>
+                                                    <div className="flex items-center gap-4">
+                                                        {isSignedIn && user?.id === d.author_id && (
+                                                            <Link 
+                                                                href={`/community/discussions/${createSlug(d.id, d.title)}/edit`}
+                                                                className="flex items-center gap-1 text-slate-500 hover:text-primary transition-colors text-xs"
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            >
+                                                                <Edit2 className="w-3 h-3" /> Edit
+                                                            </Link>
+                                                        )}
+                                                        <div className="flex items-center gap-4 text-slate-500 font-mono text-xs">
+                                                            <span className="px-2 py-1 rounded">+ {d.likes_count}</span>
+                                                            <span>/</span>
+                                                            <span className="px-2 py-1 rounded">R {d.replies_count}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

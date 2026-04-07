@@ -1,5 +1,5 @@
 // Base URL for the local FastAPI Python backend
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 export interface User {
     clerk_id: string;

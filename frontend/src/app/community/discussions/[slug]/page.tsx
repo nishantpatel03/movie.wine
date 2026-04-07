@@ -281,7 +281,7 @@ export default function DiscussionDetailPage() {
                                     className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
                                 />
                                 <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
-                                    <h4 className="text-2xl font-serif italic text-white mb-2">{discussion.movie_title}</h4>
+                                    <h4 className="text-2xl font-serif italic text-white mb-2">{discussion.title}</h4>
                                     <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-white transition-colors">
                                         View Stream <ExternalLink className="w-3 h-3" />
                                     </button>
