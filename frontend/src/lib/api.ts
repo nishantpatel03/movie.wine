@@ -119,15 +119,17 @@ export async function fetchFromBackend<T>(endpoint: string, params: Record<strin
     const url = `${API_BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`;
 
     try {
+        console.log(`Fetching from backend: ${url}`);
         // For development, we bypass cache to ensure fresh TMDB keys are used.
         // Replace with { next: { revalidate: 3600 } } in production.
         const response = await fetch(url, { cache: 'no-store' });
         if (!response.ok) {
+            console.error(`Backend error for ${url}: ${response.status} ${response.statusText}`);
             throw new Error(`Failed to fetch from backend: ${response.status} ${response.statusText}`);
         }
         return await response.json();
     } catch (error) {
-        console.error("Backend fetch error:", error);
+        console.error(`Backend fetch error for ${url}:`, error);
         throw error;
     }
 }
@@ -555,6 +557,15 @@ export async function deleteStreamingLink(clerkId: string, linkId: number): Prom
 
 export async function getActiveContent(): Promise<any[]> {
     return fetchFromBackend('/links/content/active');
+}
+
+export async function getLibraryStats(): Promise<{
+    total_links: number;
+    movie_links: number;
+    tv_links: number;
+    total_users: number;
+}> {
+    return fetchFromBackend('/links/stats/summary');
 }
 
 // --- Notifications Types ---

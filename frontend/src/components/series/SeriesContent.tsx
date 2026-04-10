@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { TVShow, getImageUrl, createSlug } from '@/lib/api';
+import { useState, useEffect } from 'react';
+import { TVShow, getImageUrl, createSlug, getLibraryStats, getActiveContent } from '@/lib/api';
 import Link from 'next/link';
 
 // Animation Variants
@@ -30,21 +30,138 @@ const GENRE_MAP: Record<number, string> = {
 
 export function SeriesContent({ initialShows }: { initialShows: TVShow[] }) {
     const [activeFilter, setActiveFilter] = useState('All');
+    const [premiumShows, setPremiumShows] = useState<any[]>([]);
+    const [stats, setStats] = useState<{ tv_links: number } | null>(null);
+
+    // Fetch premium content and stats
+    useEffect(() => {
+        const fetchPremiumData = async () => {
+            try {
+                const [statsRes, activeRes] = await Promise.all([
+                    getLibraryStats(),
+                    getActiveContent()
+                ]);
+                setStats(statsRes);
+                // Filter for series only
+                setPremiumShows(activeRes.filter(item => item.media_type === 'tv'));
+            } catch (err) {
+                console.error("Error fetching premium data:", err);
+            }
+        };
+        fetchPremiumData();
+    }, []);
 
     // UI filters we want to show
-    const filters = ['All', 'Action & Adventure', 'Sci-Fi & Fantasy', 'Drama', 'Comedy', 'Mystery', 'Crime'];
+    const filters = ['All', 'Premium', 'Action & Adventure', 'Sci-Fi & Fantasy', 'Drama', 'Comedy', 'Mystery', 'Crime'];
 
     // Map TMDB genre IDs to our filter names for filtering math
     const filterToId: Record<string, number> = {
         'Action & Adventure': 10759, 'Sci-Fi & Fantasy': 10765, 'Drama': 18, 'Comedy': 35, 'Mystery': 9648, 'Crime': 80
     };
 
-    const filteredShows = activeFilter === 'All'
-        ? initialShows
-        : initialShows.filter(m => m.genre_ids.includes(filterToId[activeFilter]));
+    let filteredShows = [];
+    if (activeFilter === 'All') {
+        filteredShows = initialShows;
+    } else if (activeFilter === 'Premium') {
+        filteredShows = premiumShows.map(ps => {
+            const fullShow = initialShows.find(s => s.id === ps.tmdb_id);
+            if (fullShow) return fullShow;
+            return {
+                id: ps.tmdb_id,
+                name: ps.title,
+                poster_path: ps.poster_path,
+                genre_ids: [],
+                vote_average: 0,
+                first_air_date: '',
+                media_type: 'tv'
+            } as any as TVShow;
+        });
+    } else {
+        filteredShows = initialShows.filter(m => m.genre_ids.includes(filterToId[activeFilter]));
+    }
 
     return (
         <section className="px-6 lg:px-12 py-16 max-w-screen-2xl mx-auto">
+            {/* Premium Library Card - Midnight Gold Refinement */}
+            {activeFilter !== 'Premium' && stats && stats.tv_links > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -5, scale: 1.01 }}
+                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    className="mb-12 relative group cursor-pointer"
+                    onClick={() => setActiveFilter('Premium')}
+                >
+                    {/* Animated Gradient Border Glow */}
+                    <div className="absolute -inset-[1px] rounded-[2rem] bg-gradient-to-r from-primary/50 via-primary/5 to-primary/50 opacity-30 group-hover:opacity-100 blur-[2px] transition-opacity duration-500"></div>
+                    
+                    {/* Main Card Body */}
+                    <div className="relative overflow-hidden rounded-[2rem] bg-[#050505] border border-white/5 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 backdrop-blur-3xl shadow-2xl">
+                        
+                        {/* Background Spotlight / Shimmer */}
+                        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                            <motion.div 
+                                animate={{ 
+                                    x: ['-100%', '200%'],
+                                    opacity: [0, 0.1, 0]
+                                }}
+                                transition={{ 
+                                    duration: 4, 
+                                    repeat: Infinity, 
+                                    ease: "linear",
+                                    repeatDelay: 1
+                                }}
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12"
+                            />
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full"></div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row items-center gap-8 relative z-10 w-full md:w-auto">
+                            {/* Iconic Badge */}
+                            <div className="relative h-24 w-24 flex-shrink-0">
+                                <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110 animate-pulse"></div>
+                                <div className="relative h-full w-full rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-black border border-white/10 flex items-center justify-center shadow-2xl group-hover:border-primary/40 transition-colors duration-500 ring-1 ring-white/5">
+                                    <span className="material-symbols-outlined text-primary text-5xl font-light scale-110 group-hover:rotate-12 transition-transform duration-500">
+                                        workspace_premium
+                                    </span>
+                                </div>
+                                {/* Small Glowing Orb */}
+                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full blur-[2px] shadow-[0_0_15px_#f4c025] animate-pulse"></div>
+                            </div>
+
+                            <div className="text-center md:text-left space-y-2">
+                                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 mb-1">
+                                    <span className="flex h-1.5 w-1.5 rounded-full bg-primary animate-ping"></span>
+                                    <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Exclusive Access</span>
+                                </div>
+                                <h2 className="text-4xl md:text-5xl font-serif italic text-white tracking-tight leading-none">
+                                    The MW <span className="text-primary font-bold not-italic">Vault</span>
+                                </h2>
+                                <p className="text-slate-400 text-lg md:text-xl font-medium flex items-center justify-center md:justify-start gap-2">
+                                    Browse <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-serif italic">{stats.tv_links}</span> premium series 
+                                    <span className="hidden md:inline text-slate-600">•</span> 
+                                    <span className="text-slate-500 text-sm uppercase tracking-tighter">New Episodes</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="relative z-10 group/btn">
+                            <motion.button 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="px-10 py-4 bg-white text-black rounded-xl font-bold text-sm tracking-widest uppercase shadow-[0_10px_30px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_15px_40px_-10px_rgba(244,192,37,0.4)] transition-all duration-500 flex items-center gap-3 overflow-hidden relative"
+                            >
+                                <span className="relative z-10">Explore Vault</span>
+                                <span className="material-symbols-outlined relative z-10 text-xl group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                                {/* Hover background effect */}
+                                <div className="absolute inset-0 bg-primary opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                            </motion.button>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+
+
             {/* Filters */}
             <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
                 {filters.map((filter) => (
@@ -53,11 +170,18 @@ export function SeriesContent({ initialShows }: { initialShows: TVShow[] }) {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveFilter(filter)}
-                        className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-300 ${activeFilter === filter
-                            ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                        className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-300 flex items-center gap-2 ${activeFilter === filter
+                            ? filter === 'Premium' 
+                                ? 'bg-primary text-black shadow-[0_0_20px_rgba(244,192,37,0.4)]'
+                                : 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]'
                             : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white backdrop-blur-md border border-white/5'
                             }`}
                     >
+                        {filter === 'Premium' && (
+                            <span className={`material-symbols-outlined text-[18px] ${activeFilter === filter ? 'text-black' : 'text-primary'}`}>
+                                workspace_premium
+                            </span>
+                        )}
                         {filter}
                     </motion.button>
                 ))}
@@ -79,7 +203,7 @@ export function SeriesContent({ initialShows }: { initialShows: TVShow[] }) {
                     >
                         <Link href={`/series/${createSlug(show.id, show.name)}`} className="flex flex-col h-full w-full">
                             {/* Poster Image */}
-                            <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-5 bg-slate-800/50 shadow-xl group-hover:shadow-[0_20px_40px_-15px_rgba(139,92,246,0.2)] transition-all duration-500 border border-white/5 group-hover:border-accent-purple/30">
+                            <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-5 bg-slate-800/50 shadow-xl group-hover:shadow-[0_20px_40px_-15px_rgba(244,192,37,0.2)] transition-all duration-500 border border-white/5 group-hover:border-primary/30">
                                 <img
                                     src={getImageUrl(show.poster_path)}
                                     alt={show.name}
@@ -105,7 +229,7 @@ export function SeriesContent({ initialShows }: { initialShows: TVShow[] }) {
                                 {/* Rating Badges */}
                                 {show.vote_average > 0 && (
                                     <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider text-white shadow-lg">
-                                        <span className="material-symbols-outlined text-accent-purple text-[14px]">star</span>
+                                        <span className="material-symbols-outlined text-primary text-[14px]">star</span>
                                         {show.vote_average.toFixed(1)}
                                     </div>
                                 )}
@@ -114,14 +238,14 @@ export function SeriesContent({ initialShows }: { initialShows: TVShow[] }) {
                             {/* Metadata Details */}
                             <div className="flex-1 flex flex-col px-1">
                                 <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-[10px] font-bold text-accent-purple/90 tracking-widest uppercase truncate max-w-[65%]">
+                                    <span className="text-[10px] font-bold text-primary/90 tracking-widest uppercase truncate max-w-[65%]">
                                         {show.genre_ids[0] ? GENRE_MAP[show.genre_ids[0]] : 'Series'}
                                     </span>
                                     <span className="text-xs text-slate-500 font-medium">
                                         {show.first_air_date ? show.first_air_date.substring(0, 4) : '—'}
                                     </span>
                                 </div>
-                                <h3 className="text-white font-medium text-base group-hover:text-accent-purple transition-colors line-clamp-2 leading-snug">
+                                <h3 className="text-white font-medium text-base group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                                     {show.name}
                                 </h3>
                             </div>
