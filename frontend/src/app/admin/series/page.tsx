@@ -6,6 +6,7 @@ import { Search, Plus, Trash2, ExternalLink, Tv, ChevronRight } from 'lucide-rea
 import { searchMulti, getImageUrl, getStreamingLinks, deleteStreamingLink, StreamingLink, getTVDetails, getTVSeasonDetails } from '@/lib/api';
 import { useUser } from '@clerk/nextjs';
 import { AddLinkModal } from '@/components/admin/AddLinkModal';
+import { BulkImportModal } from '@/components/admin/BulkImportModal';
 import { useSearchParams } from 'next/navigation';
 
 export default function AdminSeriesPage() {
@@ -23,6 +24,7 @@ export default function AdminSeriesPage() {
     const [selectedEpisode, setSelectedEpisode] = useState<number | null>(null);
     const [existingLinks, setExistingLinks] = useState<StreamingLink[]>([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
 
     useEffect(() => {
         if (preSelectedId) {
@@ -177,13 +179,22 @@ export default function AdminSeriesPage() {
                                                     <p className="text-slate-400 font-bold text-sm uppercase">{selectedSeries.number_of_seasons} Seasons</p>
                                                 </div>
                                             </div>
-                                            <button 
-                                                onClick={() => setIsAddModalOpen(true)}
-                                                className="bg-primary text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
-                                            >
-                                                <Plus className="w-5 h-5" />
-                                                ADD LINK
-                                            </button>
+                                            <div className="flex gap-3">
+                                                <button 
+                                                    onClick={() => setIsBulkImportOpen(true)}
+                                                    className="bg-white/10 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-white/20 transition-all border border-white/10"
+                                                >
+                                                    <Plus className="w-5 h-5" />
+                                                    BULK IMPORT
+                                                </button>
+                                                <button 
+                                                    onClick={() => setIsAddModalOpen(true)}
+                                                    className="bg-primary text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                                                >
+                                                    <Plus className="w-5 h-5" />
+                                                    ADD LINK
+                                                </button>
+                                            </div>
                                         </div>
                                         <p className="text-slate-400 text-sm mt-4 line-clamp-2 leading-relaxed">{selectedSeries.overview}</p>
                                     </div>
@@ -295,6 +306,20 @@ export default function AdminSeriesPage() {
                 seasonNumber={selectedSeason || undefined}
                 episodeNumber={selectedEpisode || undefined}
                 onSuccess={(newLink) => setExistingLinks([...existingLinks, newLink])}
+            />
+
+            <BulkImportModal
+                isOpen={isBulkImportOpen}
+                onClose={() => setIsBulkImportOpen(false)}
+                tmdbId={selectedSeries?.id}
+                title={selectedSeries?.name}
+                posterPath={selectedSeries?.poster_path}
+                seasonNumber={selectedSeason || undefined}
+                onSuccess={() => {
+                    if (selectedSeries && selectedSeason) {
+                        fetchLinks(selectedSeries.id, 'tv', selectedSeason);
+                    }
+                }}
             />
         </div>
     );
