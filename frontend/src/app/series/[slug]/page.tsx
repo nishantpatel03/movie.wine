@@ -12,7 +12,7 @@ export default async function SeriesDetailsPage({ params }: { params: Promise<{ 
         // Parse ID from slug format "123-stranger-things" -> 123
         const idString = resolvedParams.slug.split('-')[0];
         const id = parseInt(idString);
-        
+
         if (isNaN(id)) throw new Error("Invalid series ID");
         show = await getTVDetails(id);
     } catch (error) {
@@ -38,11 +38,11 @@ export default async function SeriesDetailsPage({ params }: { params: Promise<{ 
     const videoKey = trailerVideo ? trailerVideo.key : null;
 
     return (
-        <SeriesDetailsClient 
-            show={show} 
-            backdropUrl={backdropUrl} 
-            posterUrl={posterUrl} 
-            videoKey={videoKey} 
+        <SeriesDetailsClient
+            show={show}
+            backdropUrl={backdropUrl}
+            posterUrl={posterUrl}
+            videoKey={videoKey}
         />
     );
 }

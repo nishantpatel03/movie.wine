@@ -58,7 +58,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
             {/* HERO SECTION */}
             <div className="relative w-full overflow-hidden flex items-center pt-[100px] lg:pt-[120px] pb-16 lg:pb-32">
                 {/* Right side polygon with backdrop */}
-                <div 
+                <div
                     className="absolute right-0 top-0 bottom-0 w-[80%] lg:w-[55%] z-0"
                     style={{ clipPath: "polygon(12% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
                 >
@@ -69,24 +69,24 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
 
                 {/* Left gradient fade */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#0a0904] via-[#0a0904]/90 lg:via-[#0a0904]/80 to-transparent z-10 w-full lg:w-[70%]" />
-                
+
                 {/* Bottom fade */}
                 <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0a0904] to-transparent z-10" />
 
                 {/* Back button - Absolute for OTT look */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
                     className="absolute top-12 left-6 lg:left-12 z-30"
                 >
                     <Link href="/series" className="group flex items-center gap-3 text-white/60 hover:text-white transition-all bg-black/20 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/20 shadow-xl">
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <span className="text-xs font-bold tracking-widest uppercase">Back to Browse</span>
                     </Link>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
@@ -166,7 +166,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                                 runtime={(show.episode_run_time?.[0] || 0) * (show.number_of_episodes || 0)}
                                 isHero={true}
                             />
-                            
+
                             <AddToListButton
                                 tmdbId={show.id}
                                 mediaType="tv"
@@ -197,11 +197,10 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-6 py-2 rounded-full text-sm font-bold transition-all border flex-shrink-0 ${
-                                    activeTab === tab 
-                                    ? 'bg-primary text-black border-primary shadow-[0_4px_14px_0_rgba(255,179,71,0.39)]' 
-                                    : 'bg-white/5 text-white/60 border-white/10 hover:text-white hover:bg-white/10 hover:border-white/20'
-                                }`}
+                                className={`px-6 py-2 rounded-full text-sm font-bold transition-all border flex-shrink-0 ${activeTab === tab
+                                        ? 'bg-primary text-black border-primary shadow-[0_4px_14px_0_rgba(255,179,71,0.39)]'
+                                        : 'bg-white/5 text-white/60 border-white/10 hover:text-white hover:bg-white/10 hover:border-white/20'
+                                    }`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                             </button>
@@ -210,7 +209,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
 
                     {/* EPISODES TAB */}
                     {activeTab === 'episodes' && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
@@ -225,23 +224,23 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
 
                     {/* REVIEWS TAB */}
                     {activeTab === 'reviews' && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <CommentSection 
-                                tmdbId={show.id} 
-                                mediaType="tv" 
-                                title={show.name} 
-                                posterPath={show.poster_path} 
+                            <CommentSection
+                                tmdbId={show.id}
+                                mediaType="tv"
+                                title={show.name}
+                                posterPath={show.poster_path}
                             />
                         </motion.div>
                     )}
 
                     {/* CAST TAB */}
                     {activeTab === 'cast' && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
@@ -252,8 +251,8 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                                     <Link href={`/person/${actor.id}`} key={actor.id}>
                                         <div className="flex items-center gap-3.5 p-3.5 bg-white/5 border border-white/[0.06] rounded-2xl transition-all hover:bg-primary/5 hover:border-primary/30 group">
                                             {actor.profile_path ? (
-                                                <img 
-                                                    src={getImageUrl(actor.profile_path, 'w185')} 
+                                                <img
+                                                    src={getImageUrl(actor.profile_path, 'w185')}
                                                     alt={actor.name}
                                                     className="w-11 h-11 object-cover rounded-full border border-white/10"
                                                 />
@@ -277,7 +276,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
 
                     {/* STORY TAB */}
                     {activeTab === 'story' && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
@@ -310,7 +309,7 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                                     {show.status}
                                 </p>
                             </div>
-                            
+
                             <div className="flex gap-8">
                                 <div>
                                     <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-white/30 mb-1.5">Seasons</p>
@@ -345,9 +344,9 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                                 <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-white/30 mb-3">User Score</p>
                                 <div className="flex items-center gap-3">
                                     <div className="w-14 h-14 rounded-full flex items-center justify-center relative shadow-lg"
-                                         style={{
+                                        style={{
                                             background: `conic-gradient(var(--tw-colors-primary, #6C63FF) ${(show.vote_average || 0) * 36}deg, rgba(255,255,255,0.08) ${(show.vote_average || 0) * 36}deg)`
-                                         }}>
+                                        }}>
                                         <div className="w-11 h-11 rounded-full bg-[#111820] flex items-center justify-center z-10 border border-[#111820]">
                                             <span className="text-[14px] font-bold text-white">
                                                 {Math.round((show.vote_average || 0) * 10)}%
@@ -357,13 +356,13 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                                     <p className="text-[13px] text-white/40">Audience Score</p>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
 
-            <StreamingPlayerModal 
+            <StreamingPlayerModal
                 isOpen={isPlayerModalOpen}
                 onClose={() => setIsPlayerModalOpen(false)}
                 links={streamingLinks}

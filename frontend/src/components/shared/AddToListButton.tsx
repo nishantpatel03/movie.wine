@@ -97,7 +97,7 @@ export function AddToListButton({
                 className={`flex items-center gap-2 font-black uppercase tracking-widest transition-all rounded-2xl border
                     ${isInAnyList
                         ? 'bg-primary/20 border-primary text-primary hover:bg-primary/30 shadow-[0_0_20px_rgba(244,192,37,0.1)]'
-                        : isHero 
+                        : isHero
                             ? 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)]'
                             : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
                     }

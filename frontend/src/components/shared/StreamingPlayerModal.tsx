@@ -98,7 +98,7 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                         onMouseMove={handleMouseMove}
                     >
                         {/* Header - Sleek & Minimal with Auto-hide */}
-                        <motion.div 
+                        <motion.div
                             animate={{ opacity: showControls ? 1 : 0, y: showControls ? 0 : -20 }}
                             transition={{ duration: 0.4, ease: "easeInOut" }}
                             className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black to-transparent backdrop-blur-xl absolute top-0 inset-x-0 z-50 pointer-events-auto"
@@ -125,7 +125,7 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                             <div className="flex items-center gap-4">
                                 {/* Enhanced Source Selector */}
                                 <div className="relative hidden md:block">
-                                    <button 
+                                    <button
                                         onClick={() => setIsSourceOpen(!isSourceOpen)}
                                         className="flex items-center gap-4 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all hover:border-white/20 active:scale-95"
                                     >
@@ -143,7 +143,7 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
 
                                     <AnimatePresence>
                                         {isSourceOpen && (
-                                            <motion.div 
+                                            <motion.div
                                                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -174,7 +174,7 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                                     </AnimatePresence>
                                 </div>
 
-                                <button 
+                                <button
                                     onClick={toggleFullscreen}
                                     className="w-12 h-12 hidden md:flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all active:scale-90 group"
                                     title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
@@ -182,8 +182,8 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                                     {isFullscreen ? <Minimize className="w-5 h-5 text-white/50" /> : <Maximize className="w-5 h-5 text-white/50" />}
                                 </button>
 
-                                <button 
-                                    onClick={onClose} 
+                                <button
+                                    onClick={onClose}
                                     className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-500 transition-all active:scale-90 group"
                                 >
                                     <X className="w-6 h-6 transition-transform group-hover:rotate-90" />
@@ -197,7 +197,7 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-primary/5 blur-[150px] opacity-20 pointer-events-none" />
 
                             {!isPlaying ? (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     className="absolute inset-0 flex flex-col items-center justify-center space-y-10 z-10 p-12 text-center overflow-hidden"
@@ -205,8 +205,8 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                                     {/* Movie Backdrop Placeholder Overlay */}
                                     {(selectedLink?.poster_path || posterPath) && (
                                         <div className="absolute inset-0 z-0">
-                                            <img 
-                                                src={`https://image.tmdb.org/t/p/original${selectedLink?.poster_path || posterPath}`} 
+                                            <img
+                                                src={`https://image.tmdb.org/t/p/original${selectedLink?.poster_path || posterPath}`}
                                                 className="w-full h-full object-cover opacity-20 blur-sm scale-110"
                                                 alt=""
                                             />
@@ -229,7 +229,7 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                                         </motion.button>
 
                                         <div className="mt-10 max-w-xl">
-                                            <motion.h3 
+                                            <motion.h3
                                                 initial={{ y: 20, opacity: 0 }}
                                                 animate={{ y: 0, opacity: 1 }}
                                                 transition={{ delay: 0.2 }}
@@ -237,13 +237,13 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                                             >
                                                 Start Your Journey
                                             </motion.h3>
-                                            <motion.p 
+                                            <motion.p
                                                 initial={{ y: 20, opacity: 0 }}
                                                 animate={{ y: 0, opacity: 1 }}
                                                 transition={{ delay: 0.3 }}
                                                 className="text-white/40 text-sm md:text-base font-medium leading-relaxed tracking-wide"
                                             >
-                                                Streaming from <span className="text-primary font-black uppercase tracking-widest">{selectedLink?.provider_name}</span> in crystal clear <span className="text-white font-black">{selectedLink?.quality}</span> quality. 
+                                                Streaming from <span className="text-primary font-black uppercase tracking-widest">{selectedLink?.provider_name}</span> in crystal clear <span className="text-white font-black">{selectedLink?.quality}</span> quality.
                                                 The ultimate cinematic experience is just a click away.
                                             </motion.p>
                                         </div>
@@ -253,26 +253,26 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                                 <div className="w-full h-full relative aspect-video bg-black flex items-center justify-center">
                                     {selectedLink?.url ? (
                                         <>
-                                            <iframe 
+                                            <iframe
                                                 src={
-                                                    selectedLink.url.startsWith('//') 
-                                                        ? `https:${selectedLink.url}` 
-                                                        : selectedLink.url.startsWith('http') 
-                                                            ? selectedLink.url 
+                                                    selectedLink.url.startsWith('//')
+                                                        ? `https:${selectedLink.url}`
+                                                        : selectedLink.url.startsWith('http')
+                                                            ? selectedLink.url
                                                             : `https://${selectedLink.url}`
-                                                } 
+                                                }
                                                 className="w-full h-full relative z-10"
                                                 allowFullScreen
                                                 allow="autoplay; encrypted-media"
                                                 referrerPolicy="no-referrer"
                                                 sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin"
                                             ></iframe>
-                                            
+
                                             {/* Link Fallback Overlay - Repositioned and Styled more elegantly */}
                                             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 opacity-0 hover:opacity-100 transition-opacity duration-300">
-                                                <a 
-                                                    href={selectedLink.url} 
-                                                    target="_blank" 
+                                                <a
+                                                    href={selectedLink.url}
+                                                    target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="px-6 py-2.5 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-full text-white/60 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-black hover:border-primary transition-all flex items-center gap-3 shadow-2xl"
                                                 >
@@ -290,7 +290,7 @@ export function StreamingPlayerModal({ isOpen, onClose, links, title, posterPath
                                     )}
                                     {/* Mobile Source Toggle Overlay */}
                                     <div className="absolute bottom-10 left-10 md:hidden z-30">
-                                        <button 
+                                        <button
                                             onClick={() => setIsSourceOpen(!isSourceOpen)}
                                             className="px-6 py-3 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl"
                                         >

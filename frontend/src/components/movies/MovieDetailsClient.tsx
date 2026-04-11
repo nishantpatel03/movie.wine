@@ -68,7 +68,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
             {/* OTT Style Hero Backdrop Section */}
             <section className="relative w-full min-h-[85vh] lg:min-h-[90vh] overflow-hidden flex items-center pt-32 pb-24">
                 {/* Background Image & Strong Overlays */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
@@ -85,19 +85,19 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                 </motion.div>
 
                 {/* Back button - Positioned absolutely for a cleaner look */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
                     className="absolute top-12 left-6 lg:left-12 z-20"
                 >
                     <Link href="/movies" className="group flex items-center gap-3 text-slate-400 hover:text-white transition-all bg-black/20 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/20 shadow-xl">
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <span className="text-xs font-bold tracking-widest uppercase">Back</span>
                     </Link>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
@@ -207,9 +207,9 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
 
             {/* Content Details Below the Hero */}
             <section className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
-                
+
                 {/* Main Column */}
-                <motion.div 
+                <motion.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
@@ -238,7 +238,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 {movie.credits.cast.slice(0, 6).map((actor: any) => (
                                     <Link href={`/person/${actor.id}`} key={actor.id}>
-                                        <motion.div 
+                                        <motion.div
                                             whileHover={{ scale: 1.03, backgroundColor: "rgba(255,255,255,0.1)" }}
                                             className="bg-white/5 backdrop-blur-lg border border-white/5 rounded-2xl overflow-hidden flex items-center gap-4 p-3 pr-4 group transition-colors shadow-lg"
                                         >
@@ -260,7 +260,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
 
                     {/* Comments Section */}
                     <motion.div variants={fadeInUp} className="pt-8">
-                        <CommentSection 
+                        <CommentSection
                             tmdbId={movie.id}
                             mediaType="movie"
                             title={movie.title}
@@ -270,7 +270,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                 </motion.div>
 
                 {/* Sidebar Info */}
-                <motion.div 
+                <motion.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
@@ -315,7 +315,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
 
             </section>
 
-            <StreamingPlayerModal 
+            <StreamingPlayerModal
                 isOpen={isPlayerModalOpen}
                 onClose={() => setIsPlayerModalOpen(false)}
                 links={streamingLinks}

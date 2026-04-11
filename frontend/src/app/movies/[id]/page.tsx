@@ -34,11 +34,11 @@ export default async function MovieDetailsPage({ params }: { params: Promise<{ i
     const videoKey = trailerVideo ? trailerVideo.key : null;
 
     return (
-        <MovieDetailsClient 
-            movie={movie} 
-            backdropUrl={backdropUrl} 
-            posterUrl={posterUrl} 
-            videoKey={videoKey} 
+        <MovieDetailsClient
+            movie={movie}
+            backdropUrl={backdropUrl}
+            posterUrl={posterUrl}
+            videoKey={videoKey}
         />
     );
 }

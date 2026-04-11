@@ -33,10 +33,9 @@ export function MovieTrailerModal({ videoKey, btnText = "WATCH TRAILER", isHero 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(true)}
-                className={`flex items-center gap-2 rounded-2xl font-black transition-all ${
-                    isHero 
-                    ? 'px-6 py-3.5 lg:px-8 lg:py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 hover:border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)] text-[11px] tracking-widest' 
-                    : 'px-5 py-3 bg-white/5 text-white border border-white/10 hover:bg-white/10 text-[10px] tracking-widest'}`}
+                className={`flex items-center gap-2 rounded-2xl font-black transition-all ${isHero
+                        ? 'px-6 py-3.5 lg:px-8 lg:py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 hover:border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)] text-[11px] tracking-widest'
+                        : 'px-5 py-3 bg-white/5 text-white border border-white/10 hover:bg-white/10 text-[10px] tracking-widest'}`}
             >
                 <div className="w-5 h-5 flex items-center justify-center">
                     <Play className="fill-current w-4 h-4" />
