@@ -41,9 +41,10 @@ export function NotificationDropdown() {
     const handleMarkAsRead = async (id: number) => {
         try {
             await markNotificationAsRead(id);
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-            // Trigger unread count sync if needed, or optimistically update store
-            // Local state management for this list
+            // Remove the notification from the local list once it's read
+            setNotifications(prev => prev.filter(n => n.id !== id));
+            // The store's unreadCount will be updated by the next fetch or manually
+            // if we wanted, but the dropdown list itself now removes it.
         } catch (error) {
             console.error('Error marking as read:', error);
         }
@@ -80,7 +81,10 @@ export function NotificationDropdown() {
                             <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-white/5">
                                 <h3 className="font-black text-[10px] uppercase tracking-widest text-white/60">Activity</h3>
                                 <button 
-                                    onClick={() => markAllRead(user.id)}
+                                    onClick={async () => {
+                                        await markAllRead(user.id);
+                                        setNotifications([]); // Clear the list as they are all read/removed
+                                    }}
                                     className="text-[9px] font-bold text-primary hover:text-primary/80 transition-colors uppercase tracking-widest"
                                 >
                                     Mark all read

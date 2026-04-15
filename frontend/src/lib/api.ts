@@ -355,12 +355,12 @@ export async function getTrending(mediaType: 'all' | 'movie' | 'tv' | 'person' =
     return fetchFromBackend(`/tmdb/trending/${mediaType}`, { time_window: timeWindow });
 }
 
-export async function discoverMovies(page: number = 1, sortBy: string = 'popularity.desc', withGenres?: string): Promise<TMDBResponse<Movie>> {
-    return fetchFromBackend(`/tmdb/discover/movie`, { page, sort_by: sortBy, with_genres: withGenres });
+export async function discoverMovies(page: number = 1, sortBy: string = 'popularity.desc', withGenres?: string, withOriginalLanguage?: string): Promise<TMDBResponse<Movie>> {
+    return fetchFromBackend(`/tmdb/discover/movie`, { page, sort_by: sortBy, with_genres: withGenres, with_original_language: withOriginalLanguage });
 }
 
-export async function discoverTV(page: number = 1, sortBy: string = 'popularity.desc', withGenres?: string): Promise<TMDBResponse<TVShow>> {
-    return fetchFromBackend(`/tmdb/discover/tv`, { page, sort_by: sortBy, with_genres: withGenres });
+export async function discoverTV(page: number = 1, sortBy: string = 'popularity.desc', withGenres?: string, withOriginalLanguage?: string): Promise<TMDBResponse<TVShow>> {
+    return fetchFromBackend(`/tmdb/discover/tv`, { page, sort_by: sortBy, with_genres: withGenres, with_original_language: withOriginalLanguage });
 }
 
 export async function getMovieDetails(id: number): Promise<any> {

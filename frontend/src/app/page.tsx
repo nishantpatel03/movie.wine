@@ -1,4 +1,4 @@
-import { getTrending, fetchFromBackend, TMDBResponse } from '@/lib/api';
+import { getTrending, fetchFromBackend, TMDBResponse, getUserProfile } from '@/lib/api';
 import { HomeHeroSection } from '@/components/home/HomeHeroSection';
 import { TopPicksBento } from '@/components/home/TopPicksBento';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
@@ -6,8 +6,21 @@ import Link from 'next/link';
 import WhySection from '@/components/home/WhySection';
 import TopTenSlider from '@/components/home/TopTenSlider';
 import SpecialPicksSlider from '@/components/home/SpecialPicksSlider';
+import HomeOnboarding from '@/components/home/HomeOnboarding';
+import { auth } from '@clerk/nextjs/server';
 
 export default async function HomePage() {
+  const { userId } = auth();
+  let userProfile = null;
+  
+  if (userId) {
+    try {
+      userProfile = await getUserProfile(userId);
+    } catch (e) {
+      console.warn("User not found in DB during homepage fetch, possibly still syncing.");
+    }
+  }
+
   // Fetch trending all (for hero + top picks), movies, and tv in parallel
   let trendingAll: any[] = [];
   let trendingMovies: any[] = [];
@@ -15,13 +28,24 @@ export default async function HomePage() {
   let recommendedMovies: any[] = [];
   let recommendedSeries: any[] = [];
 
+  const genreFilter = userProfile?.favourite_genres || '';
+  const langFilter = userProfile?.content_language || 'en';
+
   try {
+    const fetchRecMovies = userProfile?.favourite_genres 
+      ? fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/movie', { with_genres: genreFilter, with_original_language: langFilter, sort_by: 'popularity.desc', page: 1 })
+      : fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 1000, page: 1 });
+
+    const fetchRecSeries = userProfile?.favourite_genres
+      ? fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/tv', { with_genres: genreFilter, with_original_language: langFilter, sort_by: 'popularity.desc', page: 1 })
+      : fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/tv', { sort_by: 'vote_average.desc', 'vote_count.gte': 500, page: 1 });
+
     const [allRes, moviesRes, seriesRes, recMoviesRes, recSeriesRes] = await Promise.all([
       getTrending('all', 'day'),
       getTrending('movie', 'week'),
       getTrending('tv', 'week'),
-      fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/movie', { sort_by: 'vote_average.desc', 'vote_count.gte': 1000, page: 1 }),
-      fetchFromBackend<TMDBResponse<any>>('/tmdb/discover/tv', { sort_by: 'vote_average.desc', 'vote_count.gte': 500, page: 1 }),
+      fetchRecMovies,
+      fetchRecSeries,
     ]);
     trendingAll = allRes.results;
     trendingMovies = moviesRes.results;
@@ -46,6 +70,7 @@ export default async function HomePage() {
     <div className="relative min-h-screen w-full flex flex-col bg-background-dark text-slate-100 font-display overflow-x-hidden">
       {/* Header — unchanged */}
       <HomeNavBar />
+      <HomeOnboarding />
       
       <main className="flex-1 flex flex-col">
         {/* Hero section handles its own internal padding/centering */}
@@ -58,7 +83,7 @@ export default async function HomePage() {
           </section>
 
           <section className="max-content-width">
-            <SpecialPicksSlider items={mixedRecommendations} />
+            <SpecialPicksSlider items={mixedRecommendations} isPersonalized={!!userProfile?.favourite_genres} />
           </section>
 
           <section className="max-content-width px-6 lg:px-12">

@@ -298,7 +298,7 @@ export default function CommunityPage() {
                                                 <h3 className="text-2xl md:text-3xl font-serif mb-4 leading-snug group-hover:text-white text-slate-300 transition-colors">
                                                     {d.title}
                                                 </h3>
-                                                <p className="text-slate-500 font-light leading-relaxed mb-8 line-clamp-2">
+                                                <p className="text-slate-400 font-light leading-relaxed mb-8 line-clamp-2">
                                                     {d.excerpt}
                                                 </p>
                                                 

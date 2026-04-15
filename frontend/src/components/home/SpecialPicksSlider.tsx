@@ -133,14 +133,17 @@ function MediaCard({ item }: { item: MediaItem }) {
 export default function SpecialPicksSlider({
     items,
     label = "Specially For You",
-    duration = 40
+    duration = 40,
+    isPersonalized = false
 }: {
     items: MediaItem[];
     label?: string;
     duration?: number;
+    isPersonalized?: boolean;
 }) {
     if (!items.length) return null;
 
+    const displayLabel = isPersonalized ? "Handpicked for You" : label;
     const doubled = [...items, ...items];
 
     return (
@@ -151,12 +154,12 @@ export default function SpecialPicksSlider({
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                         <Sparkles className="w-5 h-5 text-primary" />
                         <p style={{ color: '#f4c025', fontSize: '10px', fontWeight: 900, letterSpacing: '0.4em', textTransform: 'uppercase' }}>
-                            Curated Selection
+                            {isPersonalized ? "AI-Powered Discovery" : "Curated Selection"}
                         </p>
                         <Sparkles className="w-5 h-5 text-primary" />
                     </div>
                     <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.5rem', color: '#fff', fontWeight: 700, lineHeight: 1.2, fontStyle: 'italic' }}>
-                        {label}
+                        {displayLabel}
                     </h2>
                     <div style={{ width: 60, height: 3, background: 'linear-gradient(to right, transparent, #f4c025, transparent)', marginTop: 20, borderRadius: 2 }} />
                 </div>

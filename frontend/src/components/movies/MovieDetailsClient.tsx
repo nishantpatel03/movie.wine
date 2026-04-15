@@ -66,7 +66,7 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
             <HomeNavBar />
 
             {/* OTT Style Hero Backdrop Section */}
-            <section className="relative w-full min-h-[85vh] lg:min-h-[90vh] overflow-hidden flex items-center pt-32 pb-24">
+            <section className="relative w-full min-h-[85vh] lg:min-h-[90vh] flex items-center pt-32 pb-24 z-[35]">
                 {/* Background Image & Strong Overlays */}
                 <motion.div
                     initial={{ opacity: 0, scale: 1.05 }}
@@ -84,25 +84,21 @@ export function MovieDetailsClient({ movie, backdropUrl, posterUrl, videoKey }: 
                     <div className="absolute inset-0 w-full lg:w-3/4 bg-gradient-to-r from-[#0a0904] via-[#0a0904]/90 to-transparent"></div>
                 </motion.div>
 
-                {/* Back button - Positioned absolutely for a cleaner look */}
-                <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="absolute top-12 left-6 lg:left-12 z-20"
-                >
-                    <Link href="/movies" className="group flex items-center gap-3 text-slate-400 hover:text-white transition-all bg-black/20 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/20 shadow-xl">
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-xs font-bold tracking-widest uppercase">Back</span>
-                    </Link>
-                </motion.div>
+
 
                 <motion.div
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
-                    className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col gap-6 lg:gap-8 lg:w-2/3"
+                    className="relative z-10 w-full px-6 lg:px-24 flex flex-col gap-6 lg:gap-8 lg:w-3/4"
                 >
+                    {/* Back button - Integrated into hero flow */}
+                    <motion.div variants={fadeInUp} className="mb-4">
+                        <Link href="/movies" className="group w-fit flex items-center gap-3 text-slate-400 hover:text-white transition-all bg-white/5 hover:bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/20 shadow-xl">
+                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            <span className="text-[10px] font-black tracking-[0.2em] uppercase">Back</span>
+                        </Link>
+                    </motion.div>
 
                     <div className="space-y-4">
                         <motion.h1 variants={fadeInRight} className="text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-none drop-shadow-2xl font-bold tracking-tighter">

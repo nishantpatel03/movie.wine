@@ -1,0 +1,144 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(8px);
+}
+
+.modal {
+    background: #0f0f0f;
+    border: 1px solid #333;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: #222;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff0055, #ffcc00);
+    transition: width 0.3s ease;
+}
+
+.step h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #fff;
+    text-align: center;
+}
+
+.step p {
+    color: #888;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.genreGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.genreBtn, .langBtn, .feedBtn {
+    padding: 12px 15px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.genreBtn:hover, .langBtn:hover, .feedBtn:hover {
+    background: #222;
+    border-color: #555;
+}
+
+.active {
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #fff !important;
+    font-weight: 600;
+}
+
+.languageList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.feedOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.feedBtn {
+    font-size: 1.1rem;
+    padding: 20px;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.primaryBtn {
+    padding: 15px 40px;
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.primaryBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.primaryBtn:not(:disabled):hover {
+    transform: scale(1.05);
+}
+
+.secondaryBtn {
+    padding: 15px 40px;
+    background: transparent;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.secondaryBtn:hover {
+    background: #111;
+}

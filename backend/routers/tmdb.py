@@ -50,18 +50,22 @@ async def get_trending(media_type: str = "all", time_window: str = "day"):
     return data
 
 @router.get("/discover/movie")
-async def discover_movies(page: int = 1, sort_by: str = "popularity.desc", with_genres: Optional[str] = None):
+async def discover_movies(page: int = 1, sort_by: str = "popularity.desc", with_genres: Optional[str] = None, with_original_language: Optional[str] = None):
     params = {"page": page, "sort_by": sort_by}
     if with_genres:
         params["with_genres"] = with_genres
+    if with_original_language:
+        params["with_original_language"] = with_original_language
     data = fetch_tmdb("/discover/movie", params)
     return data
 
 @router.get("/discover/tv")
-async def discover_tv(page: int = 1, sort_by: str = "popularity.desc", with_genres: Optional[str] = None):
+async def discover_tv(page: int = 1, sort_by: str = "popularity.desc", with_genres: Optional[str] = None, with_original_language: Optional[str] = None):
     params = {"page": page, "sort_by": sort_by}
     if with_genres:
         params["with_genres"] = with_genres
+    if with_original_language:
+        params["with_original_language"] = with_original_language
     data = fetch_tmdb("/discover/tv", params)
     return data
 
