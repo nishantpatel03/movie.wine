@@ -38,13 +38,19 @@ const LANGUAGES = [
 export default function OnboardingModal({ user, onComplete }: OnboardingModalProps) {
     const [step, setStep] = useState(1);
     const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
-    const [selectedLanguage, setSelectedLanguage] = useState('en');
+    const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['en']);
     const [defaultFeed, setDefaultFeed] = useState('all');
     const [loading, setLoading] = useState(false);
 
     const toggleGenre = (id: number) => {
         setSelectedGenres(prev => 
             prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]
+        );
+    };
+    
+    const toggleLanguage = (code: string) => {
+        setSelectedLanguages(prev => 
+            prev.includes(code) ? prev.filter(l => l !== code) : [...prev, code]
         );
     };
 
@@ -56,7 +62,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
         try {
             const updated = await updateUser(user.clerk_id, {
                 favourite_genres: selectedGenres.join(','),
-                content_language: selectedLanguage,
+                content_language: selectedLanguages.join(','),
                 default_feed: defaultFeed
             });
             onComplete(updated);
@@ -110,8 +116,8 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                             {LANGUAGES.map(lang => (
                                 <button 
                                     key={lang.code}
-                                    className={`${styles.langBtn} ${selectedLanguage === lang.code ? styles.active : ''}`}
-                                    onClick={() => setSelectedLanguage(lang.code)}
+                                    className={`${styles.langBtn} ${selectedLanguages.includes(lang.code) ? styles.active : ''}`}
+                                    onClick={() => toggleLanguage(lang.code)}
                                 >
                                     {lang.name}
                                 </button>

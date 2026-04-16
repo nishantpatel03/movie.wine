@@ -2,7 +2,8 @@
 
 import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, Star, PlayCircle, Plus } from 'lucide-react';
+import { ArrowLeft, Star, PlayCircle, Plus, Lock } from 'lucide-react';
+import { SignInButton, useUser } from '@clerk/nextjs';
 import { HomeNavBar } from '@/components/home/HomeNavBar';
 import { MovieTrailerModal } from '@/components/movies/MovieTrailerModal';
 import { SeasonList } from './SeasonList';
@@ -36,6 +37,7 @@ interface SeriesDetailsClientProps {
 }
 
 export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: SeriesDetailsClientProps) {
+    const { isSignedIn } = useUser();
     const [activeTab, setActiveTab] = useState('episodes');
     const [streamingLinks, setStreamingLinks] = useState<StreamingLink[]>([]);
     const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
@@ -140,15 +142,28 @@ export function SeriesDetailsClient({ show, backdropUrl, posterUrl, videoKey }: 
                     {/* Action Buttons - Premium Unified Design */}
                     <div className="flex flex-wrap items-center gap-3 pt-10 pb-4 md:pb-0">
                         {streamingLinks.length > 0 && (
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setIsPlayerModalOpen(true)}
-                                className="h-[52px] flex items-center gap-2.5 px-8 rounded-full font-black transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_8px_20px_-4px_rgba(244,192,37,0.4)] shrink-0 text-xs tracking-[0.15em] uppercase"
-                            >
-                                <PlayCircle className="w-5 h-5 fill-current" />
-                                WATCH NOW
-                            </motion.button>
+                            isSignedIn ? (
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setIsPlayerModalOpen(true)}
+                                    className="h-[52px] flex items-center gap-2.5 px-8 rounded-full font-black transition-all bg-primary text-black hover:bg-primary/90 shadow-[0_8px_20px_-4px_rgba(244,192,37,0.4)] shrink-0 text-xs tracking-[0.15em] uppercase"
+                                >
+                                    <PlayCircle className="w-5 h-5 fill-current" />
+                                    WATCH NOW
+                                </motion.button>
+                            ) : (
+                                <SignInButton mode="modal">
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="h-[52px] flex items-center gap-2.5 px-8 rounded-full font-black transition-all bg-white/10 text-white hover:bg-white/20 border border-white/10 shrink-0 text-xs tracking-[0.15em] uppercase"
+                                    >
+                                        <Lock className="w-4 h-4" />
+                                        LOGIN TO WATCH
+                                    </motion.button>
+                                </SignInButton>
+                            )
                         )}
 
                         <MovieTrailerModal videoKey={videoKey} isHero={true} />
